@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Upload, FileDown, ArrowUp, ArrowDown, X } from 'lucide-react';
+import { Upload, FileDown, ArrowUp, ArrowDown, X, CheckCircle2 } from 'lucide-react';
 import { jsPDF } from 'jspdf';
 import { Dropzone } from '../components/ui/Dropzone';
 import { ResultCard } from '../components/ui/ResultCard';
@@ -140,10 +140,19 @@ export function ImageToPdf() {
               </div>
               <div className="card">
                 <h2 style={{ fontSize: '1.1rem', marginBottom: '1rem', color: 'var(--text-primary)' }}>Features</h2>
-                <ul style={{ listStylePosition: 'inside', color: 'var(--text-secondary)', display: 'flex', flexDirection: 'column', gap: '0.5rem', fontSize: '0.9rem' }}>
-                  <li>100% Client side processing (Secure)</li>
-                  <li>Fast local generation</li>
-                  <li>High quality conversion</li>
+                <ul style={{ listStyleType: 'none', color: 'var(--text-secondary)', display: 'flex', flexDirection: 'column', gap: '0.5rem', fontSize: '0.9rem' }}>
+                  <li style={{ display: 'flex', alignItems: 'flex-start', gap: '0.5rem' }}>
+                    <CheckCircle2 size={16} color="var(--primary)" style={{ flexShrink: 0, marginTop: '2px' }} />
+                    <span>Combine multiple images into one PDF</span>
+                  </li>
+                  <li style={{ display: 'flex', alignItems: 'flex-start', gap: '0.5rem' }}>
+                    <CheckCircle2 size={16} color="var(--primary)" style={{ flexShrink: 0, marginTop: '2px' }} />
+                    <span>Reorder images before generating</span>
+                  </li>
+                  <li style={{ display: 'flex', alignItems: 'flex-start', gap: '0.5rem' }}>
+                    <CheckCircle2 size={16} color="var(--primary)" style={{ flexShrink: 0, marginTop: '2px' }} />
+                    <span>Choose page size and orientation</span>
+                  </li>
                 </ul>
               </div>
             </div>

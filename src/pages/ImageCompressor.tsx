@@ -250,8 +250,8 @@ export const ImageCompressor: React.FC = () => {
       {sourceImage && (
         <div className="dashboard-sidebar">
           <div className="dashboard-sidebar-content">
-            <div className="card" style={{ padding: '1rem' }}>
-              <h3 style={{ fontSize: '1.1rem', fontWeight: 600, marginBottom: '1rem', color: 'var(--text-primary)' }}>Compression Settings</h3>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+              <h3 style={{ fontSize: '1.1rem', fontWeight: 600, color: 'var(--text-primary)' }}>Compression Settings</h3>
               
               <div className="input-group" style={{ marginBottom: '1.5rem' }}>
                 <label style={{ fontSize: '0.9rem' }}>Target Maximum Size (KB)</label>
@@ -291,7 +291,7 @@ export const ImageCompressor: React.FC = () => {
               </div>
             </div>
 
-            <div className="card controls" style={{ padding: '1rem', marginTop: 'auto' }}>
+            <div className="controls" style={{ marginTop: 'auto', display: 'flex', flexDirection: 'column', gap: '1rem' }}>
               <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
                 <button
                   onClick={handleCompress}

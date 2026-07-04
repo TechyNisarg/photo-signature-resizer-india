@@ -8,7 +8,7 @@ import { useImageProcessor } from '../hooks/useImageProcessor';
 import type { PresetCategory, PresetType, Preset } from '../utils/presetData';
 import { getPresetByRoute, getPresetRoute, getPresetsByCategory } from '../utils/presetData';
 import { SEO_CONTENT } from '../utils/seoContent';
-import { Trash2, DownloadCloud, Image as ImageIcon } from 'lucide-react';
+import { Trash2, DownloadCloud, Image as ImageIcon, CheckCircle2 } from 'lucide-react';
 import { ResultCard } from '../components/ui/ResultCard';
 import { ProcessingOverlay } from '../components/ui/ProcessingOverlay';
 
@@ -217,9 +217,12 @@ export const Home: React.FC = () => {
           {userRequirements.length > 0 && (
             <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
               <h2 style={{ fontSize: '1.1rem', color: 'var(--text-primary)' }}>Requirements</h2>
-              <ul style={{ listStylePosition: 'inside', color: 'var(--text-secondary)', display: 'flex', flexDirection: 'column', gap: '0.25rem', fontSize: '0.9rem' }}>
+              <ul style={{ listStyleType: 'none', color: 'var(--text-secondary)', display: 'flex', flexDirection: 'column', gap: '0.5rem', fontSize: '0.9rem' }}>
                 {userRequirements.map((inst, idx) => (
-                  <li key={idx}>{inst}</li>
+                  <li key={idx} style={{ display: 'flex', alignItems: 'flex-start', gap: '0.5rem' }}>
+                    <CheckCircle2 size={16} color="var(--primary)" style={{ flexShrink: 0, marginTop: '2px' }} />
+                    <span>{inst}</span>
+                  </li>
                 ))}
               </ul>
             </div>
@@ -228,9 +231,12 @@ export const Home: React.FC = () => {
           {category !== 'custom' && outputSpecs.length > 0 && (
             <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
               <h2 style={{ fontSize: '1.1rem', color: 'var(--text-primary)' }}>Output Specifications</h2>
-              <ul style={{ listStylePosition: 'inside', color: 'var(--text-secondary)', display: 'flex', flexDirection: 'column', gap: '0.25rem', fontSize: '0.9rem' }}>
+              <ul style={{ listStyleType: 'none', color: 'var(--text-secondary)', display: 'flex', flexDirection: 'column', gap: '0.5rem', fontSize: '0.9rem' }}>
                 {outputSpecs.map((inst, idx) => (
-                  <li key={idx}>{inst}</li>
+                  <li key={idx} style={{ display: 'flex', alignItems: 'flex-start', gap: '0.5rem' }}>
+                    <CheckCircle2 size={16} color="var(--primary)" style={{ flexShrink: 0, marginTop: '2px' }} />
+                    <span>{inst}</span>
+                  </li>
                 ))}
               </ul>
             </div>

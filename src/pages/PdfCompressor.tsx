@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Upload, FileText, DownloadCloud, Trash2, ArrowLeft, ArrowRight, X, AlertCircle } from 'lucide-react';
+import { Upload, FileText, DownloadCloud, Trash2, ArrowLeft, ArrowRight, X, AlertCircle, CheckCircle2 } from 'lucide-react';
 import { Dropzone } from '../components/ui/Dropzone';
 import { ResultCard } from '../components/ui/ResultCard';
 import { ProcessingOverlay } from '../components/ui/ProcessingOverlay';
@@ -276,11 +276,20 @@ export const PdfCompressor: React.FC = () => {
               </div>
               <div className="card">
                 <h2 style={{ fontSize: '1.1rem', marginBottom: '1rem', color: 'var(--text-primary)' }}>Features</h2>
-                <ul style={{ listStylePosition: 'inside', color: 'var(--text-secondary)', display: 'flex', flexDirection: 'column', gap: '0.5rem', fontSize: '0.9rem' }}>
-                  <li>100% Client side processing (Secure)</li>
-                  <li>Single optimized PDF document</li>
-                  <li>High-quality smart compression algorithm</li>
-                </ul>
+              <ul style={{ listStyleType: 'none', color: 'var(--text-secondary)', display: 'flex', flexDirection: 'column', gap: '0.5rem', fontSize: '0.9rem' }}>
+                <li style={{ display: 'flex', alignItems: 'flex-start', gap: '0.5rem' }}>
+                  <CheckCircle2 size={16} color="var(--primary)" style={{ flexShrink: 0, marginTop: '2px' }} />
+                  <span>Significantly reduce PDF file size</span>
+                </li>
+                <li style={{ display: 'flex', alignItems: 'flex-start', gap: '0.5rem' }}>
+                  <CheckCircle2 size={16} color="var(--primary)" style={{ flexShrink: 0, marginTop: '2px' }} />
+                  <span>Choose compression strength</span>
+                </li>
+                <li style={{ display: 'flex', alignItems: 'flex-start', gap: '0.5rem' }}>
+                  <CheckCircle2 size={16} color="var(--primary)" style={{ flexShrink: 0, marginTop: '2px' }} />
+                  <span>Maintains document readability</span>
+                </li>
+              </ul>
               </div>
             </div>
           </div>
