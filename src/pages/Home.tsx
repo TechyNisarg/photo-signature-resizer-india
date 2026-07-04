@@ -138,7 +138,7 @@ export const Home: React.FC = () => {
             </div>
 
             {SEO_CONTENT[category] && (
-              <div className="seo-text" style={{ color: 'var(--text-secondary)', textAlign: 'left', padding: '0 0.5rem' }}>
+              <div className="seo-text" style={{ color: 'var(--text-secondary)', textAlign: 'left', padding: '0' }}>
                 <h2 style={{ fontSize: '1.25rem', marginBottom: '1rem', color: 'var(--text-primary)' }}>{SEO_CONTENT[category].title}</h2>
                 {SEO_CONTENT[category].content.map((paragraph, idx) => (
                   <p key={idx} style={{ fontSize: '0.95rem', lineHeight: '1.6', marginBottom: '1rem' }}>
@@ -195,9 +195,9 @@ export const Home: React.FC = () => {
           />
 
           {category === 'custom' && (
-            <div className="card" style={{ padding: '1rem' }}>
-              <h2 style={{ fontSize: '1.1rem', marginBottom: '1rem', color: 'var(--text-primary)' }}>Output Specifications (Manual)</h2>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+              <h2 style={{ fontSize: '1.1rem', color: 'var(--text-primary)' }}>Output Specifications (Manual)</h2>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', marginTop: '0.5rem' }}>
                 <label style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontWeight: 600, color: 'var(--text-secondary)' }}>
                   Width (px)
                   <input type="number" value={customWidth} onChange={e => setCustomWidth(Number(e.target.value) || 1)} style={{ width: '100px', padding: '0.25rem 0.5rem', borderRadius: '8px', border: '1px solid var(--border-color)', minHeight: 'auto' }} />
@@ -215,8 +215,8 @@ export const Home: React.FC = () => {
           )}
 
           {userRequirements.length > 0 && (
-            <div className="card" style={{ padding: '1rem' }}>
-              <h2 style={{ fontSize: '1.1rem', marginBottom: '0.5rem', color: 'var(--text-primary)' }}>Requirements</h2>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+              <h2 style={{ fontSize: '1.1rem', color: 'var(--text-primary)' }}>Requirements</h2>
               <ul style={{ listStylePosition: 'inside', color: 'var(--text-secondary)', display: 'flex', flexDirection: 'column', gap: '0.25rem', fontSize: '0.9rem' }}>
                 {userRequirements.map((inst, idx) => (
                   <li key={idx}>{inst}</li>
@@ -226,8 +226,8 @@ export const Home: React.FC = () => {
           )}
 
           {category !== 'custom' && outputSpecs.length > 0 && (
-            <div className="card" style={{ padding: '1rem' }}>
-              <h2 style={{ fontSize: '1.1rem', marginBottom: '0.5rem', color: 'var(--text-primary)' }}>Output Specifications</h2>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+              <h2 style={{ fontSize: '1.1rem', color: 'var(--text-primary)' }}>Output Specifications</h2>
               <ul style={{ listStylePosition: 'inside', color: 'var(--text-secondary)', display: 'flex', flexDirection: 'column', gap: '0.25rem', fontSize: '0.9rem' }}>
                 {outputSpecs.map((inst, idx) => (
                   <li key={idx}>{inst}</li>
@@ -237,7 +237,7 @@ export const Home: React.FC = () => {
           )}
 
           {sourceImage && (
-            <div className="card controls" style={{ padding: '1rem', marginTop: 'auto' }}>
+            <div className="controls" style={{ marginTop: 'auto', display: 'flex', flexDirection: 'column', gap: '1rem' }}>
               {!downloadObjectURL && activePreset?.hasOverlayOption && (
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', marginBottom: '1rem' }}>
                   <div className="input-group">
