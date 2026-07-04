@@ -637,12 +637,6 @@ html.dark .toggle-switch.checked { background: var(--primary); }
   box-shadow: var(--shadow);
   display: flex;
   flex-direction: column;
-  
-  /* Make it sticky on desktop */
-  position: sticky;
-  top: 80px; /* Account for navbar */
-  max-height: calc(100vh - 100px);
-  overflow-y: auto;
 }
 
 .dashboard-sidebar-content {
