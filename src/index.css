@@ -99,7 +99,7 @@ input { cursor: text; }
   padding: 1.5rem;
   box-shadow: var(--shadow);
   border: 1px solid var(--border-color);
-  transform: translateZ(0); /* Hardware acceleration */
+  transform: translateZ(0);
 }
 
 /* Layout */
@@ -155,32 +155,33 @@ html.dark .segmented-control {
 }
 .segmented-btn {
   flex: 1;
-  position: relative;
   background: transparent;
   border: none;
   border-radius: 8px;
-  padding: 0.6rem 0.5rem;
-  font-weight: 600;
+  padding: 0.5rem 0.5rem;
+  font-weight: 500;
   font-size: 0.9rem;
   color: var(--text-secondary);
   cursor: pointer;
-  transition: color 0.2s ease;
+  transition: all 0.2s ease;
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 0.5rem;
 }
-.segmented-btn.active {
+.segmented-btn:hover:not(.active) {
   color: var(--text-primary);
+  background: rgba(255,255,255,0.3);
 }
-.segmented-highlight {
-  position: absolute;
-  inset: 0;
+.segmented-btn.active {
+  color: var(--primary);
+  font-weight: 600;
   background: var(--surface-solid);
-  border-radius: 8px;
   box-shadow: var(--shadow-sm);
-  z-index: -1;
   border: 1px solid var(--border-color);
+}
+html.dark .segmented-btn.active {
+  color: var(--text-primary);
 }
 
 /* Dropzone */
@@ -193,7 +194,7 @@ html.dark .segmented-control {
 .dropzone {
   border: 2px dashed rgba(59, 130, 246, 0.3);
   border-radius: var(--radius);
-  padding: 2.5rem 1rem;
+  padding: 1.5rem 1rem;
   text-align: center;
   cursor: pointer;
   background: rgba(59, 130, 246, 0.02);
@@ -202,13 +203,13 @@ html.dark .segmented-control {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 1.25rem;
-  min-height: 220px;
+  gap: 1rem;
+  min-height: 160px;
   width: 100%;
   margin: 0;
   position: relative;
   overflow: hidden;
-  transform: translateZ(0); /* Hardware acceleration */
+  transform: translateZ(0);
 }
 
 html.dark .dropzone {

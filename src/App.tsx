@@ -9,9 +9,12 @@ const HeaderBackButton = () => {
   if (location.pathname === '/') return null;
   
   return (
-    <Link to="/" className="back-icon-btn" style={{ marginLeft: '-0.5rem', width: '36px', height: '36px' }} title="Back to All Tools">
-       <ArrowLeft size={20} />
-    </Link>
+    <div style={{ maxWidth: '1440px', margin: '0 auto', width: '100%', padding: '1.5rem 2rem 0', display: 'flex' }}>
+      <Link to="/" className="back-breadcrumb" style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', color: 'var(--text-secondary)', textDecoration: 'none', fontWeight: 500, fontSize: '0.95rem' }} title="Back to All Tools">
+         <ArrowLeft size={18} />
+         <span>Back to Tools</span>
+      </Link>
+    </div>
   );
 };
 import { AnimatePresence, motion } from 'framer-motion';
@@ -194,7 +197,6 @@ function App() {
               >
                 <Menu size={24} />
               </button>
-              <HeaderBackButton />
               <Link to="/" className="logo" style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
                 <Scissors size={24} />
                 <div><span className="logo-text">Resizer</span> India</div>
@@ -251,6 +253,7 @@ function App() {
         </AnimatePresence>
 
         <main className="main-container">
+          <HeaderBackButton />
           <AppRoutes />
         </main>
 

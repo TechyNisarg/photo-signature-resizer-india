@@ -1,7 +1,6 @@
 import React from 'react';
 import type { PresetCategory, PresetType } from '../utils/presetData';
 import { User, PenTool, Fingerprint, FileText, ImageIcon, Sliders } from 'lucide-react';
-import { motion } from 'framer-motion';
 
 interface PresetSelectorProps {
   currentCategory: PresetCategory;
@@ -39,15 +38,8 @@ export const PresetSelector: React.FC<PresetSelectorProps> = ({
               className={`segmented-btn ${isActive ? 'active' : ''}`}
               onClick={() => onTypeSelect(t.type)}
             >
-              {isActive && (
-                <motion.div
-                  layoutId="segmented-highlight"
-                  className="segmented-highlight"
-                  transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
-                />
-              )}
-              {TypeIcon && <TypeIcon size={16} style={{ zIndex: 10 }} />}
-              <span style={{ zIndex: 10 }}>{t.label}</span>
+              {TypeIcon && <TypeIcon size={16} />}
+              <span>{t.label}</span>
             </button>
           );
         })}
