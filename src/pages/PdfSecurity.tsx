@@ -107,7 +107,7 @@ export const PdfSecurity: React.FC = () => {
       <ProcessingOverlay isProcessing={isProcessing} message="Processing PDF..." />
       
       {/* Left Column */}
-      <div className="dashboard-left" style={{ overflowY: 'auto' }}>
+      <div className="dashboard-left">
         {!file ? (
           <div style={{ maxWidth: '700px', margin: '0 auto', width: '100%', display: 'flex', flexDirection: 'column', gap: '2rem' }}>
             <div style={{ textAlign: 'center' }}>

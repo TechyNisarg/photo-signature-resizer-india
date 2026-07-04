@@ -283,7 +283,7 @@ export const PdfMerger: React.FC = () => {
       <ProcessingOverlay isProcessing={isProcessing} message={progress || 'Processing...'} />
       
       {/* Left Column */}
-      <div className="dashboard-left" style={{ overflowY: 'auto' }}>
+      <div className="dashboard-left">
         {pages.length === 0 ? (
           <div style={{ maxWidth: '700px', margin: '0 auto', width: '100%', display: 'flex', flexDirection: 'column', gap: '2rem' }}>
             <div style={{ textAlign: 'center' }}>

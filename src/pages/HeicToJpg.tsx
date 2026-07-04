@@ -100,8 +100,8 @@ export const HeicToJpg: React.FC = () => {
     <div className="dashboard-layout">
       <ProcessingOverlay isProcessing={isProcessing} message={processingMessage || 'Processing...'} />
       
-      {/* Left Column: Editor / Upload / Result */}
-      <div className="dashboard-left" style={{ overflowY: 'auto' }}>
+      {/* Left Column: Upload / Result */}
+      <div className="dashboard-left">
         {!sourceImage ? (
           <div style={{ maxWidth: '700px', margin: '0 auto', width: '100%', display: 'flex', flexDirection: 'column', gap: '2rem' }}>
             <div style={{ textAlign: 'center' }}>

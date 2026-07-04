@@ -109,7 +109,7 @@ export function ImageToPdf() {
       <ProcessingOverlay isProcessing={isProcessing} message="Generating PDF..." />
       
       {/* Left Column */}
-      <div className="dashboard-left" style={{ overflowY: 'auto' }}>
+      <div className="dashboard-left">
         {images.length === 0 ? (
           <div style={{ maxWidth: '700px', margin: '0 auto', width: '100%', display: 'flex', flexDirection: 'column', gap: '2rem' }}>
             <div style={{ textAlign: 'center' }}>
