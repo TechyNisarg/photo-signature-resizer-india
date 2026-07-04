@@ -119,24 +119,26 @@ export const Home: React.FC = () => {
       {/* Left Column: Editor / Upload / Result */}
       <div className="dashboard-left">
         {!sourceImage ? (
-          <div style={{ maxWidth: '700px', margin: '0 auto', width: '100%', display: 'flex', flexDirection: 'column', gap: '2rem' }}>
-            <div style={{ textAlign: 'center' }}>
-              <h1 style={{ fontSize: '2rem', color: 'var(--text-primary)', marginBottom: '0.5rem' }}>
-                {activePreset?.buttonText || "Resize Image"}
-              </h1>
-              <p style={{ color: 'var(--text-secondary)' }}>Upload your file below to get started</p>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem', width: '100%' }}>
+            <div className="card" style={{ padding: '2rem', display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
+              <div style={{ textAlign: 'left' }}>
+                <h1 style={{ fontSize: '1.5rem', fontWeight: 600, color: 'var(--text-primary)', marginBottom: '0.25rem' }}>
+                  {activePreset?.buttonText || "Resize Image"}
+                </h1>
+                <p style={{ color: 'var(--text-secondary)', fontSize: '0.95rem' }}>Upload your file below to get started</p>
+              </div>
+              
+              <Dropzone 
+                onFiles={handleFiles} 
+                accept="image/jpeg, image/png, image/webp" 
+                title="Tap to Upload or Drop Image Here"
+                subtitle="Supports JPG, PNG, WebP"
+                icon={<ImageIcon size={48} color="var(--primary)" />}
+              />
             </div>
-            
-            <Dropzone 
-              onFiles={handleFiles} 
-              accept="image/jpeg, image/png, image/webp" 
-              title="Tap to Upload or Drop Image Here"
-              subtitle="Supports JPG, PNG, WebP"
-              icon={<ImageIcon size={48} color="var(--primary)" />}
-            />
 
             {SEO_CONTENT[category] && (
-              <div className="seo-text" style={{ color: 'var(--text-secondary)', textAlign: 'left', marginTop: '2rem' }}>
+              <div className="seo-text" style={{ color: 'var(--text-secondary)', textAlign: 'left', padding: '0 0.5rem' }}>
                 <h2 style={{ fontSize: '1.25rem', marginBottom: '1rem', color: 'var(--text-primary)' }}>{SEO_CONTENT[category].title}</h2>
                 {SEO_CONTENT[category].content.map((paragraph, idx) => (
                   <p key={idx} style={{ fontSize: '0.95rem', lineHeight: '1.6', marginBottom: '1rem' }}>

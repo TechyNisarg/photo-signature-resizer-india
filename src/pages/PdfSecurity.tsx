@@ -109,51 +109,53 @@ export const PdfSecurity: React.FC = () => {
       {/* Left Column */}
       <div className="dashboard-left">
         {!file ? (
-          <div style={{ maxWidth: '700px', margin: '0 auto', width: '100%', display: 'flex', flexDirection: 'column', gap: '2rem' }}>
-            <div style={{ textAlign: 'center' }}>
-              <h1 style={{ fontSize: '2rem', color: 'var(--text-primary)', marginBottom: '0.5rem', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem' }}>
-                <Lock size={32} /> PDF Security
-              </h1>
-              <p style={{ color: 'var(--text-secondary)' }}>Unlock or password protect your PDFs securely on your device.</p>
-            </div>
-            
-            <div className="preset-selector" style={{ display: 'flex', justifyContent: 'center', width: '100%', marginBottom: '1rem' }}>
-              <div className="pills-container" style={{ display: 'inline-flex', background: 'var(--surface-solid)', padding: '0.35rem', borderRadius: '12px', border: '1px solid var(--border-color)', gap: '0.25rem' }}>
-                <button
-                  onClick={() => { setMode('unlock'); setFile(null); setDownloadUrl(''); setPassword(''); }}
-                  className={`pill-btn ${mode === 'unlock' ? 'active' : ''}`}
-                  style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}
-                >
-                  <Unlock size={16} /> <span>Unlock PDF</span>
-                </button>
-                <button
-                  onClick={() => { setMode('protect'); setFile(null); setDownloadUrl(''); setPassword(''); }}
-                  className={`pill-btn ${mode === 'protect' ? 'active' : ''}`}
-                  style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}
-                >
-                  <Lock size={16} /> <span>Protect PDF</span>
-                </button>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem', width: '100%' }}>
+            <div className="card" style={{ padding: '2rem', display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
+              <div style={{ textAlign: 'left' }}>
+                <h1 style={{ fontSize: '1.5rem', fontWeight: 600, color: 'var(--text-primary)', marginBottom: '0.25rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                  <Lock size={24} /> PDF Security
+                </h1>
+                <p style={{ color: 'var(--text-secondary)', fontSize: '0.95rem' }}>Unlock or password protect your PDFs securely on your device.</p>
               </div>
-            </div>
+              
+              <div className="preset-selector" style={{ display: 'flex', justifyContent: 'flex-start', width: '100%', marginBottom: '0.5rem' }}>
+                <div className="pills-container" style={{ display: 'inline-flex', background: 'var(--surface-solid)', padding: '0.35rem', borderRadius: '12px', border: '1px solid var(--border-color)', gap: '0.25rem' }}>
+                  <button
+                    onClick={() => { setMode('unlock'); setFile(null); setDownloadUrl(''); setPassword(''); }}
+                    className={`pill-btn ${mode === 'unlock' ? 'active' : ''}`}
+                    style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}
+                  >
+                    <Unlock size={16} /> <span>Unlock PDF</span>
+                  </button>
+                  <button
+                    onClick={() => { setMode('protect'); setFile(null); setDownloadUrl(''); setPassword(''); }}
+                    className={`pill-btn ${mode === 'protect' ? 'active' : ''}`}
+                    style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}
+                  >
+                    <Lock size={16} /> <span>Protect PDF</span>
+                  </button>
+                </div>
+              </div>
 
-            <Dropzone
-              onFiles={handleFiles}
-              accept="application/pdf"
-              title="Tap to Upload or Drop PDF Here"
-              subtitle={`Select the PDF you want to ${mode}`}
-              icon={<Upload size={48} className="upload-icon" color="var(--primary)" />}
-            />
+              <Dropzone
+                onFiles={handleFiles}
+                accept="application/pdf"
+                title="Tap to Upload or Drop PDF Here"
+                subtitle={`Select the PDF you want to ${mode}`}
+                icon={<Upload size={48} className="upload-icon" color="var(--primary)" />}
+              />
+            </div>
 
             <div className="info-grid">
               <div className="card">
-                <h2 style={{ fontSize: '1.25rem', marginBottom: '1rem', color: 'var(--text-primary)' }}>100% Client-Side Privacy</h2>
-                <p style={{ color: 'var(--text-secondary)', lineHeight: 1.6 }}>
+                <h2 style={{ fontSize: '1.1rem', marginBottom: '1rem', color: 'var(--text-primary)' }}>100% Client-Side Privacy</h2>
+                <p style={{ color: 'var(--text-secondary)', lineHeight: 1.6, fontSize: '0.9rem' }}>
                   Unlike other online tools, we never upload your sensitive PDFs to any server. The encryption and decryption algorithms run entirely inside your browser using the native Web Crypto API.
                 </p>
               </div>
               <div className="card">
-                <h2 style={{ fontSize: '1.25rem', marginBottom: '1rem', color: 'var(--text-primary)' }}>Use Cases</h2>
-                <ul style={{ listStylePosition: 'inside', color: 'var(--text-secondary)', display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+                <h2 style={{ fontSize: '1.1rem', marginBottom: '1rem', color: 'var(--text-primary)' }}>Use Cases</h2>
+                <ul style={{ listStylePosition: 'inside', color: 'var(--text-secondary)', display: 'flex', flexDirection: 'column', gap: '0.5rem', fontSize: '0.9rem' }}>
                   <li>Remove passwords from Aadhaar cards for easy printing</li>
                   <li>Unlock downloaded Bank Statements</li>
                   <li>Secure your own private documents before sharing</li>

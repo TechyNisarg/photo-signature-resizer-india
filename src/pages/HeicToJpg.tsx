@@ -103,21 +103,23 @@ export const HeicToJpg: React.FC = () => {
       {/* Left Column: Upload / Result */}
       <div className="dashboard-left">
         {!sourceImage ? (
-          <div style={{ maxWidth: '700px', margin: '0 auto', width: '100%', display: 'flex', flexDirection: 'column', gap: '2rem' }}>
-            <div style={{ textAlign: 'center' }}>
-              <h1 style={{ fontSize: '2rem', color: 'var(--text-primary)', marginBottom: '0.5rem' }}>
-                HEIC to JPG Converter
-              </h1>
-              <p style={{ color: 'var(--text-secondary)' }}>Instantly convert iPhone photos to universally accepted JPG format</p>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem', width: '100%' }}>
+            <div className="card" style={{ padding: '2rem', display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
+              <div style={{ textAlign: 'left' }}>
+                <h1 style={{ fontSize: '1.5rem', fontWeight: 600, color: 'var(--text-primary)', marginBottom: '0.25rem' }}>
+                  HEIC to JPG Converter
+                </h1>
+                <p style={{ color: 'var(--text-secondary)', fontSize: '0.95rem' }}>Instantly convert iPhone photos to universally accepted JPG format</p>
+              </div>
+              
+              <Dropzone
+                onFiles={handleFiles}
+                accept=".heic,.heif,image/heic,image/heif"
+                title="Upload iPhone Photo (.heic)"
+                subtitle="Instantly convert to universally accepted JPG format"
+                icon={<ImageIcon size={48} color="var(--primary)" />}
+              />
             </div>
-            
-            <Dropzone
-              onFiles={handleFiles}
-              accept=".heic,.heif,image/heic,image/heif"
-              title="Upload iPhone Photo (.heic)"
-              subtitle="Instantly convert to universally accepted JPG format"
-              icon={<ImageIcon size={48} color="var(--primary)" />}
-            />
           </div>
         ) : (
           <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: '100%', gap: '2rem' }}>

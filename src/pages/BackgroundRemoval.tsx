@@ -122,21 +122,23 @@ export function BackgroundRemoval() {
       {/* Left Column */}
       <div className="dashboard-left">
         {!sourceImage ? (
-          <div style={{ maxWidth: '700px', margin: '0 auto', width: '100%', display: 'flex', flexDirection: 'column', gap: '2rem' }}>
-            <div style={{ textAlign: 'center' }}>
-              <h1 style={{ fontSize: '2rem', color: 'var(--text-primary)', marginBottom: '0.5rem' }}>
-                AI Background Removal
-              </h1>
-              <p style={{ color: 'var(--text-secondary)' }}>Perfect for Passport & Exam Photos</p>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem', width: '100%' }}>
+            <div className="card" style={{ padding: '2rem', display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
+              <div style={{ textAlign: 'left' }}>
+                <h1 style={{ fontSize: '1.5rem', fontWeight: 600, color: 'var(--text-primary)', marginBottom: '0.25rem' }}>
+                  AI Background Removal
+                </h1>
+                <p style={{ color: 'var(--text-secondary)', fontSize: '0.95rem' }}>Perfect for Passport & Exam Photos</p>
+              </div>
+              
+              <Dropzone
+                onFiles={handleFiles}
+                accept="image/*"
+                title="Upload Photo for Background Removal"
+                subtitle="Automatically remove backgrounds using local AI"
+                icon={<Upload size={48} color="var(--primary)" />}
+              />
             </div>
-            
-            <Dropzone
-              onFiles={handleFiles}
-              accept="image/*"
-              title="Upload Photo for Background Removal"
-              subtitle="Automatically remove backgrounds using local AI"
-              icon={<Upload size={48} color="var(--primary)" />}
-            />
           </div>
         ) : (
           <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: '100%', gap: '2rem' }}>

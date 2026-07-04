@@ -111,34 +111,36 @@ export function ImageToPdf() {
       {/* Left Column */}
       <div className="dashboard-left">
         {images.length === 0 ? (
-          <div style={{ maxWidth: '700px', margin: '0 auto', width: '100%', display: 'flex', flexDirection: 'column', gap: '2rem' }}>
-            <div style={{ textAlign: 'center' }}>
-              <h1 style={{ fontSize: '2rem', color: 'var(--text-primary)', marginBottom: '0.5rem', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem' }}>
-                <FileDown size={32} /> Image to PDF Converter
-              </h1>
-              <p style={{ color: 'var(--text-secondary)' }}>Combine multiple images into a single PDF document. 100% offline & secure.</p>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem', width: '100%' }}>
+            <div className="card" style={{ padding: '2rem', display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
+              <div style={{ textAlign: 'left' }}>
+                <h1 style={{ fontSize: '1.5rem', fontWeight: 600, color: 'var(--text-primary)', marginBottom: '0.25rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                  <FileDown size={24} /> Image to PDF Converter
+                </h1>
+                <p style={{ color: 'var(--text-secondary)', fontSize: '0.95rem' }}>Combine multiple images into a single PDF document. 100% offline & secure.</p>
+              </div>
+              
+              <Dropzone
+                onFiles={handleFiles}
+                accept="image/*"
+                multiple
+                title="Drag & Drop Images Here"
+                subtitle="or click to browse"
+                icon={<Upload size={48} className="upload-icon" color="var(--primary)" />}
+              />
             </div>
-            
-            <Dropzone
-              onFiles={handleFiles}
-              accept="image/*"
-              multiple
-              title="Drag & Drop Images Here"
-              subtitle="or click to browse"
-              icon={<Upload size={48} className="upload-icon" color="var(--primary)" />}
-            />
 
             <div className="info-grid">
               <div className="card">
-                <h2 style={{ fontSize: '1.25rem', marginBottom: '1rem', color: 'var(--text-primary)' }}>Requirements</h2>
-                <ul style={{ listStylePosition: 'inside', color: 'var(--text-secondary)', display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+                <h2 style={{ fontSize: '1.1rem', marginBottom: '1rem', color: 'var(--text-primary)' }}>Requirements</h2>
+                <ul style={{ listStylePosition: 'inside', color: 'var(--text-secondary)', display: 'flex', flexDirection: 'column', gap: '0.5rem', fontSize: '0.9rem' }}>
                   <li>Upload JPG, PNG, or WebP images</li>
                   <li>Reorder images as needed</li>
                 </ul>
               </div>
               <div className="card">
-                <h2 style={{ fontSize: '1.25rem', marginBottom: '1rem', color: 'var(--text-primary)' }}>Features</h2>
-                <ul style={{ listStylePosition: 'inside', color: 'var(--text-secondary)', display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+                <h2 style={{ fontSize: '1.1rem', marginBottom: '1rem', color: 'var(--text-primary)' }}>Features</h2>
+                <ul style={{ listStylePosition: 'inside', color: 'var(--text-secondary)', display: 'flex', flexDirection: 'column', gap: '0.5rem', fontSize: '0.9rem' }}>
                   <li>100% Client side processing (Secure)</li>
                   <li>Fast local generation</li>
                   <li>High quality conversion</li>

@@ -285,35 +285,37 @@ export const PdfMerger: React.FC = () => {
       {/* Left Column */}
       <div className="dashboard-left">
         {pages.length === 0 ? (
-          <div style={{ maxWidth: '700px', margin: '0 auto', width: '100%', display: 'flex', flexDirection: 'column', gap: '2rem' }}>
-            <div style={{ textAlign: 'center' }}>
-              <h1 style={{ fontSize: '2rem', color: 'var(--text-primary)', marginBottom: '0.5rem', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem' }}>
-                <FileText size={32} /> PDF Merger
-              </h1>
-              <p style={{ color: 'var(--text-secondary)' }}>Combine multiple images and PDFs into a single optimized PDF file.</p>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem', width: '100%' }}>
+            <div className="card" style={{ padding: '2rem', display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
+              <div style={{ textAlign: 'left' }}>
+                <h1 style={{ fontSize: '1.5rem', fontWeight: 600, color: 'var(--text-primary)', marginBottom: '0.25rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                  <FileText size={24} /> PDF Merger
+                </h1>
+                <p style={{ color: 'var(--text-secondary)', fontSize: '0.95rem' }}>Combine multiple images and PDFs into a single optimized PDF file.</p>
+              </div>
+              
+              <Dropzone
+                onFiles={handleFiles}
+                accept="image/jpeg, image/png, image/webp, application/pdf"
+                multiple
+                title="Tap to Upload or Drop Files Here"
+                subtitle="Supports PDFs and images (JPG, PNG, WebP)"
+                icon={<Upload size={48} className="upload-icon" color="var(--primary)" />}
+              />
             </div>
-            
-            <Dropzone
-              onFiles={handleFiles}
-              accept="image/jpeg, image/png, image/webp, application/pdf"
-              multiple
-              title="Tap to Upload or Drop Files Here"
-              subtitle="Supports PDFs and images (JPG, PNG, WebP)"
-              icon={<Upload size={48} className="upload-icon" color="var(--primary)" />}
-            />
 
             <div className="info-grid">
               <div className="card">
-                <h2 style={{ fontSize: '1.25rem', marginBottom: '1rem', color: 'var(--text-primary)' }}>Requirements</h2>
-                <ul style={{ listStylePosition: 'inside', color: 'var(--text-secondary)', display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+                <h2 style={{ fontSize: '1.1rem', marginBottom: '1rem', color: 'var(--text-primary)' }}>Requirements</h2>
+                <ul style={{ listStylePosition: 'inside', color: 'var(--text-secondary)', display: 'flex', flexDirection: 'column', gap: '0.5rem', fontSize: '0.9rem' }}>
                   <li>Upload single or multiple PDFs/Images</li>
                   <li>Set your desired maximum output file size</li>
                   <li>Reorder pages as needed</li>
                 </ul>
               </div>
               <div className="card">
-                <h2 style={{ fontSize: '1.25rem', marginBottom: '1rem', color: 'var(--text-primary)' }}>Features</h2>
-                <ul style={{ listStylePosition: 'inside', color: 'var(--text-secondary)', display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+                <h2 style={{ fontSize: '1.1rem', marginBottom: '1rem', color: 'var(--text-primary)' }}>Features</h2>
+                <ul style={{ listStylePosition: 'inside', color: 'var(--text-secondary)', display: 'flex', flexDirection: 'column', gap: '0.5rem', fontSize: '0.9rem' }}>
                   <li>100% Client side processing (Secure)</li>
                   <li>Single merged & optimized PDF document</li>
                   <li>High-quality smart compression algorithm</li>

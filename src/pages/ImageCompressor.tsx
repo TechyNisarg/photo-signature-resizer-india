@@ -177,21 +177,23 @@ export const ImageCompressor: React.FC = () => {
       {/* Left Column: Editor / Upload / Result */}
       <div className="dashboard-left">
         {!sourceImage ? (
-          <div style={{ maxWidth: '700px', margin: '0 auto', width: '100%', display: 'flex', flexDirection: 'column', gap: '2rem' }}>
-            <div style={{ textAlign: 'center' }}>
-              <h1 style={{ fontSize: '2rem', color: 'var(--text-primary)', marginBottom: '0.5rem' }}>
-                Image Compressor
-              </h1>
-              <p style={{ color: 'var(--text-secondary)' }}>Reduce KB Size of your images instantly</p>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem', width: '100%' }}>
+            <div className="card" style={{ padding: '2rem', display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
+              <div style={{ textAlign: 'left' }}>
+                <h1 style={{ fontSize: '1.5rem', fontWeight: 600, color: 'var(--text-primary)', marginBottom: '0.25rem' }}>
+                  Image Compressor
+                </h1>
+                <p style={{ color: 'var(--text-secondary)', fontSize: '0.95rem' }}>Reduce KB Size of your images instantly</p>
+              </div>
+              
+              <Dropzone
+                onFiles={handleFiles}
+                accept="image/jpeg,image/png,image/webp,image/heic"
+                title="Tap to Upload or Drop Image Here"
+                subtitle="Supports JPG, PNG, WebP"
+                icon={<Upload size={48} color="var(--primary)" />}
+              />
             </div>
-            
-            <Dropzone
-              onFiles={handleFiles}
-              accept="image/jpeg,image/png,image/webp,image/heic"
-              title="Tap to Upload or Drop Image Here"
-              subtitle="Supports JPG, PNG, WebP"
-              icon={<Upload size={48} color="var(--primary)" />}
-            />
           </div>
         ) : (
           <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: '100%', gap: '2rem' }}>
