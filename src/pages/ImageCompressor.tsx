@@ -171,100 +171,131 @@ export const ImageCompressor: React.FC = () => {
   const isOutputOverTarget = outputSizeKB > targetMaxKB;
 
   return (
-    <div className="container" style={{ maxWidth: '1000px', margin: '0 auto 4rem' }}>
+    <div className="dashboard-layout">
       <ProcessingOverlay isProcessing={isProcessing} message={processingMessage || 'Processing...'} />
 
-      <div className="card">
-        <h2 style={{ textAlign: 'center', marginBottom: '2rem', fontSize: '1.75rem', fontWeight: 700, color: 'var(--text-primary)' }}>
-          Image Compressor (Reduce KB Size)
-        </h2>
-
+      {/* Left Column: Editor / Upload / Result */}
+      <div className="dashboard-left" style={{ overflowY: 'auto' }}>
         {!sourceImage ? (
-          <Dropzone
-            onFiles={handleFiles}
-            accept="image/jpeg,image/png,image/webp,image/heic"
-            title="Tap to Upload or Drop Image Here"
-            subtitle="Supports JPG, PNG, WebP"
-            icon={<Upload size={32} color="var(--primary)" />}
-          />
-        ) : (
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
+          <div style={{ maxWidth: '700px', margin: '0 auto', width: '100%', display: 'flex', flexDirection: 'column', gap: '2rem' }}>
+            <div style={{ textAlign: 'center' }}>
+              <h1 style={{ fontSize: '2rem', color: 'var(--text-primary)', marginBottom: '0.5rem' }}>
+                Image Compressor
+              </h1>
+              <p style={{ color: 'var(--text-secondary)' }}>Reduce KB Size of your images instantly</p>
+            </div>
             
-            <div style={{ display: 'flex', gap: '2rem', flexWrap: 'wrap' }}>
-              <div style={{ flex: '1 1 300px', backgroundColor: 'var(--surface-solid)', borderRadius: '12px', padding: '1.5rem', border: '1px solid var(--border-color)' }}>
-                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '1rem' }}>
-                  <h3 style={{ fontSize: '1.1rem', fontWeight: 600, alignSelf: 'flex-start' }}>Original Image</h3>
-                  <img 
-                    src={sourceImage.src} 
-                    alt="Original" 
-                    style={{ width: '100%', maxHeight: '300px', objectFit: 'contain', borderRadius: '8px', border: '1px solid var(--border-color)' }} 
-                  />
-                  <p style={{ textAlign: 'center', color: 'var(--text-secondary)', fontSize: '0.9rem', marginBottom: '0.5rem' }}>
-                    {sourceFile?.name} <br/>
-                    Original Size: {sourceFile ? (sourceFile.size / 1024).toFixed(2) : 0} KB
-                  </p>
-                  <button 
-                    onClick={clearImage}
-                    className="btn-danger"
-                    style={{ padding: '0.5rem 1rem', fontSize: '0.9rem', display: 'flex', alignItems: 'center', gap: '0.5rem', width: 'auto' }}
-                  >
-                    <X size={16} />
-                    Clear Image
-                  </button>
-                </div>
+            <Dropzone
+              onFiles={handleFiles}
+              accept="image/jpeg,image/png,image/webp,image/heic"
+              title="Tap to Upload or Drop Image Here"
+              subtitle="Supports JPG, PNG, WebP"
+              icon={<Upload size={48} color="var(--primary)" />}
+            />
+          </div>
+        ) : (
+          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: '100%', gap: '2rem' }}>
+            {error && (
+              <div style={{ backgroundColor: 'rgba(239, 68, 68, 0.1)', color: 'var(--danger)', padding: '1rem', borderRadius: '8px', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                <AlertCircle size={20} />
+                {error}
+              </div>
+            )}
+
+            {!downloadUrl ? (
+              <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '1rem', width: '100%', maxWidth: '600px' }}>
+                <h3 style={{ fontSize: '1.25rem', fontWeight: 600 }}>Original Image</h3>
+                <img 
+                  src={sourceImage.src} 
+                  alt="Original" 
+                  style={{ width: '100%', maxHeight: '50vh', objectFit: 'contain', borderRadius: '8px', border: '1px solid var(--border-color)', boxShadow: '0 8px 32px rgba(0,0,0,0.1)' }} 
+                />
+                <p style={{ textAlign: 'center', color: 'var(--text-secondary)' }}>
+                  {sourceFile?.name} <br/>
+                  Original Size: {sourceFile ? (sourceFile.size / 1024).toFixed(2) : 0} KB
+                </p>
+              </div>
+            ) : (
+              <div className="result-view">
+                <ResultCard
+                  successMessage={isOutputOverTarget ? 'Compressed, but still above target' : 'Compressed Successfully! 🎉'}
+                  downloadUrl={downloadUrl}
+                  downloadFilename={`compressed-${targetMaxKB}KB.jpg`}
+                  buttonText="Download Image"
+                >
+                  <img src={downloadUrl} alt="Compressed" style={{ maxWidth: '100%', maxHeight: '40vh', margin: '0 auto 2rem', borderRadius: '8px', border: '1px solid var(--border-color)', boxShadow: '0 8px 32px rgba(0,0,0,0.1)' }} />
+                  <div style={{ display: 'flex', justifyContent: 'center', gap: '3rem', flexWrap: 'wrap' }}>
+                    <div style={{ textAlign: 'center' }}>
+                      <p style={{ color: 'var(--text-secondary)', marginBottom: '0.25rem' }}>Target Size</p>
+                      <p style={{ fontSize: '1.25rem', fontWeight: 600 }}>{targetMaxKB} KB</p>
+                    </div>
+                    <div style={{ borderLeft: '1px solid var(--border-color)' }}></div>
+                    <div style={{ textAlign: 'center' }}>
+                      <p style={{ color: 'var(--text-secondary)', marginBottom: '0.25rem' }}>Output Size</p>
+                      <p style={{ fontSize: '1.25rem', fontWeight: 600, color: isOutputOverTarget ? 'var(--danger)' : 'var(--success)' }}>
+                        {outputSizeKB.toFixed(1)} KB
+                      </p>
+                    </div>
+                  </div>
+                </ResultCard>
+              </div>
+            )}
+          </div>
+        )}
+      </div>
+
+      {/* Right Column: Sidebar */}
+      {sourceImage && (
+        <div className="dashboard-sidebar">
+          <div className="dashboard-sidebar-content">
+            <div className="card" style={{ padding: '1rem' }}>
+              <h3 style={{ fontSize: '1.1rem', fontWeight: 600, marginBottom: '1rem', color: 'var(--text-primary)' }}>Compression Settings</h3>
+              
+              <div className="input-group" style={{ marginBottom: '1.5rem' }}>
+                <label style={{ fontSize: '0.9rem' }}>Target Maximum Size (KB)</label>
+                <input 
+                  type="number" 
+                  value={targetMaxKB} 
+                  onChange={(e) => { setTargetMaxKB(Number(e.target.value)); setDownloadUrl(''); }}
+                  min={1} 
+                  max={10000}
+                  style={{ 
+                    width: '100%', 
+                    padding: '0.75rem', 
+                    fontSize: '1.1rem', 
+                    borderRadius: '8px', 
+                    border: '1px solid var(--border-color)', 
+                    backgroundColor: 'var(--bg-color)' 
+                  }}
+                />
               </div>
 
-              <div style={{ flex: '1 1 300px', backgroundColor: 'var(--surface-solid)', borderRadius: '12px', padding: '1.5rem', border: '1px solid var(--border-color)', display: 'flex', flexDirection: 'column' }}>
-                <h3 style={{ fontSize: '1.1rem', fontWeight: 600, marginBottom: '1.5rem' }}>Compression Settings</h3>
-                
-                <div className="input-group" style={{ marginBottom: '2rem' }}>
-                  <label>Target Maximum Size (KB)</label>
-                  <input 
-                    type="number" 
-                    value={targetMaxKB} 
-                    onChange={(e) => setTargetMaxKB(Number(e.target.value))}
-                    min={1} 
-                    max={10000}
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '0.5rem' }}>
+                {[20, 50, 100, 200, 500].map(size => (
+                  <button
+                    key={size}
+                    className="btn-secondary"
                     style={{ 
-                      width: '100%', 
-                      padding: '0.75rem 1rem', 
-                      fontSize: '1.2rem', 
-                      borderRadius: '12px', 
-                      border: '1px solid var(--border-color)', 
-                      outline: 'none', 
-                      backgroundColor: 'var(--bg-color)', 
-                      fontFamily: 'inherit',
-                      color: 'var(--text-primary)'
+                      padding: '0.5rem', 
+                      fontSize: '0.85rem', 
+                      backgroundColor: targetMaxKB === size ? 'var(--primary)' : undefined, 
+                      color: targetMaxKB === size ? 'white' : undefined 
                     }}
-                  />
-                  <p style={{ color: 'var(--text-secondary)', fontSize: '0.85rem', marginTop: '0.5rem' }}>
-                    We will compress the image to be as close to this size as possible without exceeding it.
-                  </p>
-                </div>
+                    onClick={() => { setTargetMaxKB(size); setDownloadUrl(''); }}
+                  >
+                    {size} KB
+                  </button>
+                ))}
+              </div>
+            </div>
 
-                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '0.5rem', marginBottom: '2rem' }}>
-                  {[20, 50, 100, 200, 500].map(size => (
-                    <button
-                      key={size}
-                      className="btn-secondary"
-                      style={{ 
-                        padding: '0.5rem', 
-                        fontSize: '0.9rem', 
-                        backgroundColor: targetMaxKB === size ? 'var(--primary)' : undefined, 
-                        color: targetMaxKB === size ? 'white' : undefined 
-                      }}
-                      onClick={() => { setTargetMaxKB(size); setDownloadUrl(''); }}
-                    >
-                      {size} KB
-                    </button>
-                  ))}
-                </div>
-
+            <div className="card controls" style={{ padding: '1rem', marginTop: 'auto' }}>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
                 <button
                   onClick={handleCompress}
                   disabled={isProcessing}
                   className={`btn-primary ${isProcessing ? 'processing' : ''}`}
-                  style={{ width: '100%', padding: '1rem', marginTop: 'auto' }}
+                  style={{ width: '100%', padding: '0.75rem', fontSize: '1.1rem' }}
                 >
                   {isProcessing ? (
                     <Loader2 size={20} style={{ animation: 'rotation 1s linear infinite' }} />
@@ -273,41 +304,20 @@ export const ImageCompressor: React.FC = () => {
                   )}
                   <span>{isProcessing ? 'Compressing...' : 'Compress Image'}</span>
                 </button>
+
+                <button 
+                  onClick={clearImage}
+                  className="btn-danger"
+                  style={{ width: '100%', padding: '0.75rem', fontSize: '1.1rem' }}
+                >
+                  <X size={20} />
+                  <span>Clear Image</span>
+                </button>
               </div>
             </div>
-
-            {error && (
-              <div style={{ backgroundColor: 'rgba(239, 68, 68, 0.1)', color: 'var(--danger)', padding: '1rem', borderRadius: '8px', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                <AlertCircle size={20} />
-                {error}
-              </div>
-            )}
-
-            {downloadUrl && (
-              <ResultCard
-                successMessage={isOutputOverTarget ? 'Compressed, but still above target' : 'Compressed Successfully! 🎉'}
-                downloadUrl={downloadUrl}
-                downloadFilename={`compressed-${targetMaxKB}KB.jpg`}
-                buttonText="Download Image"
-              >
-                <div style={{ display: 'flex', justifyContent: 'center', gap: '2rem' }}>
-                  <div style={{ textAlign: 'center' }}>
-                    <p style={{ color: 'var(--text-secondary)', marginBottom: '0.25rem' }}>Target Size</p>
-                    <p style={{ fontSize: '1.25rem', fontWeight: 600 }}>{targetMaxKB} KB</p>
-                  </div>
-                  <div style={{ borderLeft: '1px solid var(--border-color)' }}></div>
-                  <div style={{ textAlign: 'center' }}>
-                    <p style={{ color: 'var(--text-secondary)', marginBottom: '0.25rem' }}>Output Size</p>
-                    <p style={{ fontSize: '1.25rem', fontWeight: 600, color: isOutputOverTarget ? 'var(--danger)' : 'var(--success)' }}>
-                      {outputSizeKB.toFixed(1)} KB
-                    </p>
-                  </div>
-                </div>
-              </ResultCard>
-            )}
           </div>
-        )}
-      </div>
+        </div>
+      )}
     </div>
   );
 };

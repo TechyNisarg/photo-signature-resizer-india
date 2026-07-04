@@ -112,111 +112,132 @@ export function BackgroundRemoval() {
   };
 
   return (
-    <div className="container" style={{ maxWidth: '1000px', margin: '0 auto 4rem' }}>
+    <div className="dashboard-layout">
       <ProcessingOverlay 
         isProcessing={isProcessing} 
         message={`${progress.action}...`}
         submessage={progress.percent > 0 && progress.percent < 100 ? `${progress.percent}%` : undefined}
       />
-      <div className="card">
-        <h2 style={{ textAlign: 'center', marginBottom: '2rem', fontSize: '1.75rem', fontWeight: 700, color: 'var(--text-primary)' }}>
-          AI Background Removal
-        </h2>
-
+      
+      {/* Left Column: Editor / Upload / Result */}
+      <div className="dashboard-left" style={{ overflowY: 'auto' }}>
         {!sourceImage ? (
-          <Dropzone
-            onFiles={handleFiles}
-            accept="image/*"
-            title="Upload Photo for Background Removal"
-            subtitle="Perfect for Passport & Exam Photos"
-            icon={<Upload size={32} color="var(--primary)" />}
-          />
-        ) : (
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
-            <div style={{ display: 'flex', gap: '2rem', flexWrap: 'wrap' }}>
-              <div style={{ flex: '1 1 300px', backgroundColor: 'var(--surface-solid)', borderRadius: '12px', padding: '1.5rem', border: '1px solid var(--border-color)' }}>
-                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '1rem' }}>
-                  <h3 style={{ fontSize: '1.1rem', fontWeight: 600, alignSelf: 'flex-start' }}>Original Image</h3>
-                  <img 
-                    src={sourceImage} 
-                    alt="Original" 
-                    style={{ width: '100%', maxHeight: '300px', objectFit: 'contain', borderRadius: '8px', border: '1px solid var(--border-color)' }} 
-                  />
-                  <p style={{ textAlign: 'center', color: 'var(--text-secondary)', fontSize: '0.9rem', marginBottom: '0.5rem' }}>
-                    {sourceFile?.name} <br/>
-                    Original Size: {sourceFile ? (sourceFile.size / 1024).toFixed(2) : 0} KB
-                  </p>
-                  <button 
-                    onClick={clearImage}
-                    className="btn-danger"
-                    style={{ padding: '0.5rem 1rem', fontSize: '0.9rem', display: 'flex', alignItems: 'center', gap: '0.5rem', width: 'auto' }}
-                  >
-                    <X size={16} />
-                    Clear Image
-                  </button>
-                </div>
-              </div>
-
-              <div style={{ flex: '1 1 300px', backgroundColor: 'var(--surface-solid)', borderRadius: '12px', padding: '1.5rem', border: '1px solid var(--border-color)', display: 'flex', flexDirection: 'column' }}>
-                {!previewUrl ? (
-                  <>
-                    <h3 style={{ fontSize: '1.1rem', fontWeight: 600, marginBottom: '1.5rem' }}>AI Action</h3>
-                    <p style={{ color: 'var(--text-secondary)', fontSize: '0.9rem', marginBottom: '2rem' }}>
-                      Our AI model runs 100% locally in your browser. No data is sent to any server. The first time you use it, a 30MB model will be downloaded automatically.
-                    </p>
-                    <button
-                      onClick={removeBackground}
-                      disabled={isProcessing}
-                      className={`btn-primary ${isProcessing ? 'processing' : ''}`}
-                      style={{ width: '100%', padding: '1rem', marginTop: 'auto' }}
-                    >
-                      <Eraser size={20} />
-                      <span>Remove Background</span>
-                    </button>
-                  </>
-                ) : (
-                  <>
-                    <h3 style={{ fontSize: '1.1rem', fontWeight: 600, marginBottom: '1.5rem' }}>Background Options</h3>
-                    <div style={{ textAlign: 'center', flex: 1, marginBottom: '1rem', background: 'url("data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 2 2\'><rect width=\'1\' height=\'1\' fill=\'%23e5e7eb\'/><rect x=\'1\' y=\'1\' width=\'1\' height=\'1\' fill=\'%23e5e7eb\'/></svg>")', backgroundSize: '20px 20px', borderRadius: '8px', padding: '1rem', border: '1px solid var(--border-color)' }}>
-                      <img src={previewUrl} alt="Processed" style={{ maxWidth: '100%', maxHeight: '200px' }} />
-                    </div>
-
-                    <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap', marginTop: 'auto' }}>
-                      <button 
-                        onClick={() => setBgColor('transparent')}
-                        style={{ flex: 1, padding: '0.5rem', borderRadius: '8px', border: `2px solid ${bgColor === 'transparent' ? 'var(--primary)' : 'var(--border-color)'}`, background: 'var(--surface-solid)', cursor: 'pointer', fontWeight: 500 }}
-                      >
-                        Transparent
-                      </button>
-                      <button 
-                        onClick={() => setBgColor('#ffffff')}
-                        style={{ flex: 1, padding: '0.5rem', borderRadius: '8px', border: `2px solid ${bgColor === '#ffffff' ? 'var(--primary)' : 'var(--border-color)'}`, background: '#ffffff', color: '#000', cursor: 'pointer', fontWeight: 500 }}
-                      >
-                        White
-                      </button>
-                      <button 
-                        onClick={() => setBgColor('#3b82f6')}
-                        style={{ flex: 1, padding: '0.5rem', borderRadius: '8px', border: `2px solid ${bgColor === '#3b82f6' ? 'var(--primary)' : 'var(--border-color)'}`, background: '#3b82f6', color: '#fff', cursor: 'pointer', fontWeight: 500 }}
-                      >
-                        Blue
-                      </button>
-                    </div>
-                  </>
-                )}
-              </div>
+          <div style={{ maxWidth: '700px', margin: '0 auto', width: '100%', display: 'flex', flexDirection: 'column', gap: '2rem' }}>
+            <div style={{ textAlign: 'center' }}>
+              <h1 style={{ fontSize: '2rem', color: 'var(--text-primary)', marginBottom: '0.5rem' }}>
+                AI Background Removal
+              </h1>
+              <p style={{ color: 'var(--text-secondary)' }}>Perfect for Passport & Exam Photos</p>
             </div>
-
-            {previewUrl && (
-              <ResultCard
-                successMessage="Background Removed Successfully! 🎉"
-                downloadUrl={previewUrl}
-                downloadFilename={`bg-removed-${Date.now()}.${bgColor === 'transparent' ? 'png' : 'jpg'}`}
-                buttonText="Download Image"
-              />
+            
+            <Dropzone
+              onFiles={handleFiles}
+              accept="image/*"
+              title="Upload Photo for Background Removal"
+              subtitle="Automatically remove backgrounds using local AI"
+              icon={<Upload size={48} color="var(--primary)" />}
+            />
+          </div>
+        ) : (
+          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: '100%', gap: '2rem' }}>
+            {!previewUrl ? (
+              <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '1rem', width: '100%', maxWidth: '600px' }}>
+                <h3 style={{ fontSize: '1.25rem', fontWeight: 600 }}>Original Image</h3>
+                <img 
+                  src={sourceImage} 
+                  alt="Original" 
+                  style={{ width: '100%', maxHeight: '50vh', objectFit: 'contain', borderRadius: '8px', border: '1px solid var(--border-color)', boxShadow: '0 8px 32px rgba(0,0,0,0.1)' }} 
+                />
+              </div>
+            ) : (
+              <div className="result-view">
+                <ResultCard
+                  successMessage="Background Removed Successfully! 🎉"
+                  downloadUrl={previewUrl}
+                  downloadFilename={`bg-removed-${Date.now()}.${bgColor === 'transparent' ? 'png' : 'jpg'}`}
+                  buttonText="Download Image"
+                >
+                  <div style={{ textAlign: 'center', width: '100%', marginBottom: '2rem', background: 'url("data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 2 2\'><rect width=\'1\' height=\'1\' fill=\'%23e5e7eb\'/><rect x=\'1\' y=\'1\' width=\'1\' height=\'1\' fill=\'%23e5e7eb\'/></svg>")', backgroundSize: '20px 20px', borderRadius: '8px', padding: '1rem', border: '1px solid var(--border-color)' }}>
+                    <img src={previewUrl} alt="Processed" style={{ maxWidth: '100%', maxHeight: '40vh', objectFit: 'contain' }} />
+                  </div>
+                </ResultCard>
+              </div>
             )}
           </div>
         )}
       </div>
+
+      {/* Right Column: Sidebar */}
+      {sourceImage && (
+        <div className="dashboard-sidebar">
+          <div className="dashboard-sidebar-content">
+            <div className="card" style={{ padding: '1rem' }}>
+              <h3 style={{ fontSize: '1.1rem', fontWeight: 600, marginBottom: '0.5rem', color: 'var(--text-primary)' }}>File Information</h3>
+              <p style={{ fontSize: '0.9rem', color: 'var(--text-secondary)' }}>
+                <strong>Name:</strong> {sourceFile?.name}
+              </p>
+              <p style={{ fontSize: '0.9rem', color: 'var(--text-secondary)' }}>
+                <strong>Original Size:</strong> {sourceFile ? (sourceFile.size / 1024).toFixed(2) : 0} KB
+              </p>
+            </div>
+
+            <div className="card" style={{ padding: '1rem', display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+              {!previewUrl ? (
+                <>
+                  <h3 style={{ fontSize: '1.1rem', fontWeight: 600, color: 'var(--text-primary)' }}>AI Action</h3>
+                  <p style={{ color: 'var(--text-secondary)', fontSize: '0.85rem' }}>
+                    Our AI model runs 100% locally in your browser. No data is sent to any server. The first time you use it, a 30MB model will be downloaded automatically.
+                  </p>
+                  <button
+                    onClick={removeBackground}
+                    disabled={isProcessing}
+                    className={`btn-primary ${isProcessing ? 'processing' : ''}`}
+                    style={{ width: '100%', padding: '0.75rem', fontSize: '1.1rem', marginTop: '0.5rem' }}
+                  >
+                    <Eraser size={20} />
+                    <span>Remove Background</span>
+                  </button>
+                </>
+              ) : (
+                <>
+                  <h3 style={{ fontSize: '1.1rem', fontWeight: 600, color: 'var(--text-primary)' }}>Background Options</h3>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+                    <button 
+                      onClick={() => setBgColor('transparent')}
+                      style={{ padding: '0.75rem', borderRadius: '8px', border: `2px solid ${bgColor === 'transparent' ? 'var(--primary)' : 'var(--border-color)'}`, background: 'var(--surface-solid)', cursor: 'pointer', fontWeight: 500 }}
+                    >
+                      Transparent (PNG)
+                    </button>
+                    <button 
+                      onClick={() => setBgColor('#ffffff')}
+                      style={{ padding: '0.75rem', borderRadius: '8px', border: `2px solid ${bgColor === '#ffffff' ? 'var(--primary)' : 'var(--border-color)'}`, background: '#ffffff', color: '#000', cursor: 'pointer', fontWeight: 500 }}
+                    >
+                      Solid White (JPG)
+                    </button>
+                    <button 
+                      onClick={() => setBgColor('#3b82f6')}
+                      style={{ padding: '0.75rem', borderRadius: '8px', border: `2px solid ${bgColor === '#3b82f6' ? 'var(--primary)' : 'var(--border-color)'}`, background: '#3b82f6', color: '#fff', cursor: 'pointer', fontWeight: 500 }}
+                    >
+                      Solid Blue (JPG)
+                    </button>
+                  </div>
+                </>
+              )}
+            </div>
+
+            <div className="card controls" style={{ padding: '1rem', marginTop: 'auto' }}>
+              <button 
+                onClick={clearImage}
+                className="btn-danger"
+                style={{ width: '100%', padding: '0.75rem', fontSize: '1.1rem' }}
+              >
+                <X size={20} />
+                <span>Clear Image</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
