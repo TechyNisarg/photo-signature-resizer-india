@@ -1,6 +1,9 @@
-import React, { useState, useRef } from 'react';
+import { useState, useEffect } from 'react';
 import { Upload, FileDown, ArrowUp, ArrowDown, X } from 'lucide-react';
 import { jsPDF } from 'jspdf';
+import { Dropzone } from '../components/ui/Dropzone';
+import { ResultCard } from '../components/ui/ResultCard';
+import { ProcessingOverlay } from '../components/ui/ProcessingOverlay';
 
 interface UploadedImage {
   id: string;
@@ -11,11 +14,17 @@ interface UploadedImage {
 export function ImageToPdf() {
   const [images, setImages] = useState<UploadedImage[]>([]);
   const [isProcessing, setIsProcessing] = useState(false);
-  const [isDragging, setIsDragging] = useState(false);
-  const fileInputRef = useRef<HTMLInputElement>(null);
+  const [downloadUrl, setDownloadUrl] = useState<string>('');
+
+  useEffect(() => {
+    return () => {
+      if (downloadUrl) URL.revokeObjectURL(downloadUrl);
+    };
+  }, [downloadUrl]);
 
   const handleFiles = (files: FileList | null) => {
     if (!files) return;
+    setDownloadUrl(''); // Reset download URL on new files
     const newImages: UploadedImage[] = [];
     Array.from(files).forEach(file => {
       if (file.type.startsWith('image/')) {
@@ -29,17 +38,12 @@ export function ImageToPdf() {
     setImages(prev => [...prev, ...newImages]);
   };
 
-  const handleDrop = (e: React.DragEvent) => {
-    e.preventDefault();
-    setIsDragging(false);
-    handleFiles(e.dataTransfer.files);
-  };
-
   const moveUp = (index: number) => {
     if (index === 0) return;
     const newImages = [...images];
     [newImages[index - 1], newImages[index]] = [newImages[index], newImages[index - 1]];
     setImages(newImages);
+    setDownloadUrl('');
   };
 
   const moveDown = (index: number) => {
@@ -47,6 +51,7 @@ export function ImageToPdf() {
     const newImages = [...images];
     [newImages[index], newImages[index + 1]] = [newImages[index + 1], newImages[index]];
     setImages(newImages);
+    setDownloadUrl('');
   };
 
   const removeImage = (index: number) => {
@@ -54,6 +59,7 @@ export function ImageToPdf() {
     URL.revokeObjectURL(newImages[index].url);
     newImages.splice(index, 1);
     setImages(newImages);
+    setDownloadUrl('');
   };
 
   const loadImageDimensions = (url: string): Promise<{ width: number, height: number, img: HTMLImageElement }> => {
@@ -68,6 +74,7 @@ export function ImageToPdf() {
   const convertToPdf = async () => {
     if (images.length === 0) return;
     setIsProcessing(true);
+    setDownloadUrl('');
 
     try {
       let pdf: jsPDF | null = null;
@@ -87,7 +94,8 @@ export function ImageToPdf() {
         pdf!.addImage(img, imgType, 0, 0, width, height);
       }
 
-      pdf!.save('converted.pdf');
+      const blob = pdf!.output('blob');
+      setDownloadUrl(URL.createObjectURL(blob));
     } catch (err) {
       console.error(err);
       alert('Error converting to PDF');
@@ -98,46 +106,41 @@ export function ImageToPdf() {
 
   return (
     <div className="container" style={{ padding: '2rem 1rem' }}>
+      <ProcessingOverlay isProcessing={isProcessing} message="Generating PDF..." />
+
       <div className="hero-section" style={{ marginBottom: '2rem' }}>
         <h1>Image to PDF Converter</h1>
         <p className="subtitle" style={{ maxWidth: '600px', margin: '0 auto' }}>Combine multiple images into a single PDF document. 100% offline & secure.</p>
       </div>
 
       <div className="content-container" style={{ maxWidth: '600px', margin: '0 auto' }}>
-        <div 
-          className={`dropzone ${isDragging ? 'dragging' : ''}`}
-          onDragOver={(e) => { e.preventDefault(); setIsDragging(true); }}
-          onDragLeave={() => setIsDragging(false)}
-          onDrop={handleDrop}
-          onClick={() => fileInputRef.current?.click()}
-          style={{ marginBottom: '2rem' }}
-        >
-          <Upload size={48} className="dropzone-icon" />
-          <h3>Drag & Drop Images Here</h3>
-          <p>or click to browse</p>
-          <input
-            type="file"
-            ref={fileInputRef}
-            onChange={(e) => handleFiles(e.target.files)}
+        <div style={{ marginBottom: '2rem' }}>
+          <Dropzone
+            onFiles={handleFiles}
             accept="image/*"
             multiple
-            style={{ display: 'none' }}
+            title="Drag & Drop Images Here"
+            subtitle="or click to browse"
+            icon={<Upload size={48} className="dropzone-icon" color="var(--primary)" />}
           />
         </div>
 
         {images.length > 0 && (
-          <div className="panel" style={{ padding: '1.5rem', marginBottom: '2rem' }}>
+          <div className="panel" style={{ padding: '1.5rem', marginBottom: '2rem', backgroundColor: 'var(--surface-solid)', borderRadius: '12px', border: '1px solid var(--border-color)' }}>
             <h3 style={{ marginBottom: '1rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-              <span>Selected Images ({images.length})</span>
+              <span style={{ fontSize: '1.1rem', fontWeight: 600 }}>Selected Images ({images.length})</span>
               <button 
-                onClick={() => setImages([])} 
-                style={{ fontSize: '0.85rem', color: 'var(--danger)', background: 'none', border: 'none', cursor: 'pointer' }}
+                onClick={() => {
+                  setImages([]);
+                  setDownloadUrl('');
+                }} 
+                style={{ fontSize: '0.85rem', color: 'var(--danger)', background: 'none', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '0.25rem' }}
               >
-                Clear All
+                <X size={14} /> Clear All
               </button>
             </h3>
             
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem', marginBottom: '1.5rem', maxHeight: '400px', overflowY: 'auto' }}>
               {images.map((img, index) => (
                 <div key={img.id} style={{ display: 'flex', alignItems: 'center', gap: '1rem', padding: '0.75rem', background: 'var(--bg-primary)', borderRadius: '8px', border: '1px solid var(--border-color)' }}>
                   <img src={img.url} alt="preview" style={{ width: '60px', height: '60px', objectFit: 'cover', borderRadius: '4px' }} />
@@ -161,22 +164,33 @@ export function ImageToPdf() {
               ))}
             </div>
 
-            <button 
-              className="btn btn-primary" 
-              onClick={convertToPdf} 
-              disabled={isProcessing}
-              style={{ width: '100%', marginTop: '1.5rem', padding: '1rem' }}
-            >
-              {isProcessing ? 'Generating PDF...' : (
-                <>
-                  <FileDown size={20} />
-                  Download PDF
-                </>
-              )}
-            </button>
+            {!downloadUrl ? (
+              <button 
+                className={`btn-primary ${isProcessing ? 'processing' : ''}`}
+                onClick={convertToPdf} 
+                disabled={isProcessing || images.length === 0}
+                style={{ width: '100%', padding: '1rem' }}
+              >
+                {isProcessing ? 'Generating PDF...' : (
+                  <>
+                    <FileDown size={20} />
+                    <span>Generate PDF</span>
+                  </>
+                )}
+              </button>
+            ) : (
+              <ResultCard
+                successMessage="PDF Generated Successfully! 🎉"
+                downloadUrl={downloadUrl}
+                downloadFilename="images-converted.pdf"
+                buttonText="Download PDF"
+              />
+            )}
           </div>
         )}
       </div>
     </div>
   );
 }
+
+export default ImageToPdf;

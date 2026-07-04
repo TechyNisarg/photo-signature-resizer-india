@@ -1,6 +1,8 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { DownloadCloud, AlertCircle, X, Loader2, Image as ImageIcon } from 'lucide-react';
-
+import { AlertCircle, X, Image as ImageIcon } from 'lucide-react';
+import { Dropzone } from '../components/ui/Dropzone';
+import { ResultCard } from '../components/ui/ResultCard';
+import { ProcessingOverlay } from '../components/ui/ProcessingOverlay';
 const getErrorMessage = (error: unknown) => (
   error instanceof Error ? error.message : 'Unknown error'
 );
@@ -14,7 +16,7 @@ export const HeicToJpg: React.FC = () => {
   const [downloadUrl, setDownloadUrl] = useState('');
   const [outputSizeKB, setOutputSizeKB] = useState(0);
   const resultRef = useRef<HTMLDivElement>(null);
-  const fileInputRef = useRef<HTMLInputElement>(null);
+  
 
   useEffect(() => {
     return () => {
@@ -84,14 +86,7 @@ export const HeicToJpg: React.FC = () => {
     processFile();
   };
 
-  const handleDrop = (e: React.DragEvent<HTMLDivElement>) => {
-    e.preventDefault();
-    if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
-      handleFiles(e.dataTransfer.files);
-    }
-  };
-
-  const clearImage = () => {
+    const clearImage = () => {
     if (sourceImage) URL.revokeObjectURL(sourceImage.src);
     if (downloadUrl) URL.revokeObjectURL(downloadUrl);
     setSourceImage(null);
@@ -103,48 +98,20 @@ export const HeicToJpg: React.FC = () => {
 
   return (
     <div className="container" style={{ maxWidth: '1000px', margin: '0 auto 4rem' }}>
-      {isProcessing && (
-        <div style={{ position: 'fixed', inset: 0, backgroundColor: 'rgba(0,0,0,0.5)', zIndex: 9999, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', color: 'white' }}>
-          <Loader2 size={48} className="spinner" style={{ marginBottom: '1rem', borderTopColor: 'white' }} />
-          <h2 style={{ fontSize: '1.5rem', fontWeight: 600 }}>{processingMessage || 'Processing...'}</h2>
-        </div>
-      )}
+      <ProcessingOverlay isProcessing={isProcessing} message={processingMessage || 'Processing...'} />
       <div className="card">
         <h2 style={{ textAlign: 'center', marginBottom: '2rem', fontSize: '1.75rem', fontWeight: 700, color: 'var(--text-primary)' }}>
           HEIC to JPG Converter
         </h2>
 
         {!sourceImage ? (
-          <div 
-            className="dropzone"
-            onDragOver={(e) => e.preventDefault()}
-            onDrop={handleDrop}
-            onClick={() => fileInputRef.current?.click()}
-            style={{ 
-              border: '2px dashed var(--border-color)', 
-              borderRadius: '16px', 
-              padding: '3rem 2rem', 
-              textAlign: 'center',
-              cursor: 'pointer',
-              backgroundColor: 'var(--surface-solid)',
-              transition: 'all 0.3s ease'
-            }}
-          >
-            <input 
-              type="file" 
-              ref={fileInputRef} 
-              onChange={(e) => e.target.files && handleFiles(e.target.files)} 
-              accept=".heic,.heif,image/heic,image/heif" 
-              style={{ display: 'none' }} 
-            />
-            <div className="upload-icon-container" style={{ width: '64px', height: '64px', margin: '0 auto 1rem', backgroundColor: 'var(--bg-color)', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-              <ImageIcon size={32} color="var(--primary)" />
-            </div>
-            <h3 style={{ fontSize: '1.25rem', marginBottom: '0.5rem', color: 'var(--text-primary)' }}>
-              Upload iPhone Photo (.heic)
-            </h3>
-            <p style={{ color: 'var(--text-secondary)' }}>Instantly convert to universally accepted JPG format</p>
-          </div>
+          <Dropzone
+            onFiles={handleFiles}
+            accept=".heic,.heif,image/heic,image/heif"
+            title="Upload iPhone Photo (.heic)"
+            subtitle="Instantly convert to universally accepted JPG format"
+            icon={<ImageIcon size={32} color="var(--primary)" />}
+          />
         ) : (
           <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
             <div style={{ display: 'flex', gap: '2rem', flexWrap: 'wrap', justifyContent: 'center' }}>
@@ -179,11 +146,13 @@ export const HeicToJpg: React.FC = () => {
             )}
 
             {downloadUrl && (
-              <div ref={resultRef} className="result-card" style={{ padding: '2rem', backgroundColor: 'var(--surface-solid)', borderRadius: '12px', textAlign: 'center', border: '1px solid var(--border-color)', boxShadow: '0 8px 32px rgba(0,0,0,0.05)' }}>
-                <h4 style={{ color: 'var(--success)', fontSize: '1.5rem', marginBottom: '1rem' }}>
-                  Converted Successfully! 🎉
-                </h4>
-                <div style={{ display: 'flex', justifyContent: 'center', gap: '2rem', marginBottom: '2rem' }}>
+              <ResultCard
+                successMessage="Converted Successfully! 🎉"
+                downloadUrl={downloadUrl}
+                downloadFilename={`${sourceFile?.name.replace(/\.heic|\.heif/i, '') || 'converted'}.jpg`}
+                buttonText="Download JPG"
+              >
+                <div style={{ display: 'flex', justifyContent: 'center', gap: '2rem' }}>
                   <div style={{ textAlign: 'center' }}>
                     <p style={{ color: 'var(--text-secondary)', marginBottom: '0.25rem' }}>Format</p>
                     <p style={{ fontSize: '1.25rem', fontWeight: 600 }}>JPG</p>
@@ -196,17 +165,7 @@ export const HeicToJpg: React.FC = () => {
                     </p>
                   </div>
                 </div>
-
-                <a
-                  href={downloadUrl}
-                  download={`${sourceFile?.name.replace(/\.heic|\.heif/i, '') || 'converted'}.jpg`}
-                  className="btn-success"
-                  style={{ display: 'inline-flex', alignItems: 'center', gap: '0.5rem', padding: '1rem 2rem', fontSize: '1.1rem', borderRadius: '12px', textDecoration: 'none' }}
-                >
-                  <DownloadCloud size={24} />
-                  Download JPG
-                </a>
-              </div>
+              </ResultCard>
             )}
           </div>
         )}

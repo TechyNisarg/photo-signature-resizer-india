@@ -1,6 +1,8 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { Upload, FileText, DownloadCloud, Trash2, ArrowLeft, ArrowRight, X, AlertCircle, Check } from 'lucide-react';
-
+import { Upload, FileText, DownloadCloud, Trash2, ArrowLeft, ArrowRight, X, AlertCircle } from 'lucide-react';
+import { Dropzone } from '../components/ui/Dropzone';
+import { ResultCard } from '../components/ui/ResultCard';
+import { ProcessingOverlay } from '../components/ui/ProcessingOverlay';
 type PageEntry = {
   id: string;
   name: string;
@@ -20,7 +22,7 @@ export const PdfMerger: React.FC = () => {
   const [error, setError] = useState('');
   const [downloadUrl, setDownloadUrl] = useState('');
   const [outputSizeKB, setOutputSizeKB] = useState(0);
-  const [hasDownloaded, setHasDownloaded] = useState(false);
+  
   
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -157,14 +159,7 @@ export const PdfMerger: React.FC = () => {
     }
   };
 
-  const handleDrop = (e: React.DragEvent<HTMLDivElement>) => {
-    e.preventDefault();
-    if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
-      handleFiles(e.dataTransfer.files);
-    }
-  };
-
-  const removePage = (id: string) => {
+    const removePage = (id: string) => {
     setPages(prev => prev.filter(p => p.id !== id));
     setDownloadUrl('');
   };
@@ -285,6 +280,7 @@ export const PdfMerger: React.FC = () => {
 
   return (
     <div className="home-container" style={{ maxWidth: '960px', margin: '0 auto', padding: '2rem 1rem' }}>
+      <ProcessingOverlay isProcessing={isProcessing} message={progress || 'Processing...'} />
       {pages.length === 0 && (
         <header className="hero-section" style={{ marginBottom: '2rem', textAlign: 'center' }}>
           <h1 style={{ color: 'var(--text-primary)', marginBottom: '0.5rem', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem' }}>
@@ -305,26 +301,14 @@ export const PdfMerger: React.FC = () => {
         <div className="workspace">
           <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', width: '100%', gap: '1.5rem', maxWidth: '900px', margin: '0 auto' }}>
             <div style={{ width: '100%', maxWidth: '700px' }}>
-              <div 
-                className="dropzone"
-                onDrop={handleDrop}
-                onDragOver={(e) => e.preventDefault()}
-                onClick={() => !isProcessing && fileInputRef.current?.click()}
-                style={{ cursor: isProcessing ? 'wait' : 'pointer' }}
-              >
-          <input
-            type="file"
-            ref={fileInputRef}
-            className="hidden"
-            multiple
-            accept="image/jpeg, image/png, image/webp, application/pdf"
-            onChange={(e) => e.target.files && handleFiles(e.target.files)}
-            style={{ display: 'none' }}
-          />
-          <Upload size={48} className="upload-icon" />
-          <h3>Tap to Upload or Drop Files Here</h3>
-          <p>Supports PDFs and images (JPG, PNG, WebP)</p>
-        </div>
+              <Dropzone
+                onFiles={handleFiles}
+                accept="image/jpeg, image/png, image/webp, application/pdf"
+                multiple
+                title="Tap to Upload or Drop Files Here"
+                subtitle="Supports PDFs and images (JPG, PNG, WebP)"
+                icon={<Upload size={48} className="upload-icon" color="var(--primary)" />}
+              />
             </div>
           </div>
         </div>
@@ -548,40 +532,16 @@ export const PdfMerger: React.FC = () => {
             </button>
 
             {downloadUrl && (
-              <div className="result-card" style={{ marginTop: '2rem', padding: '1.5rem', backgroundColor: 'var(--surface-solid)', borderRadius: '12px', textAlign: 'center' }}>
-                <h4 style={{ color: isOutputOverTarget ? 'var(--danger)' : '#10b981', fontSize: '1.25rem', marginBottom: '0.5rem' }}>
-                  {isOutputOverTarget ? 'PDF Generated, Still Above Target' : 'PDF Compressed Successfully! 🎉'}
-                </h4>
-                <p style={{ color: 'var(--text-secondary)', marginBottom: '1rem' }}>
-                  Target: Under {targetMaxKB} KB | Output Size: <strong style={{ color: isOutputOverTarget ? 'var(--danger)' : '#10b981' }}>{outputSizeKB.toFixed(1)} KB</strong>
+              <ResultCard
+                successMessage={isOutputOverTarget ? 'PDF Generated, Still Above Target' : 'PDF Compressed Successfully! 🎉'}
+                downloadUrl={downloadUrl}
+                downloadFilename="document.pdf"
+                buttonText="Download document.pdf"
+              >
+                <p style={{ color: 'var(--text-secondary)' }}>
+                  Target: Under {targetMaxKB} KB | Output Size: <strong style={{ color: isOutputOverTarget ? 'var(--danger)' : 'var(--success)' }}>{outputSizeKB.toFixed(1)} KB</strong>
                 </p>
-                <a
-                  href={downloadUrl}
-                  download="document.pdf"
-                  className="btn-success"
-                  onClick={() => {
-                    setHasDownloaded(true);
-                    setTimeout(() => setHasDownloaded(false), 2500);
-                  }}
-                  style={{
-                    display: 'inline-flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    gap: '0.5rem',
-                    backgroundColor: hasDownloaded ? 'var(--success)' : 'var(--primary)',
-                    color: 'white',
-                    padding: '1rem 2rem',
-                    borderRadius: '12px',
-                    fontWeight: 600,
-                    textDecoration: 'none',
-                    boxShadow: hasDownloaded ? '0 8px 24px rgba(16, 185, 129, 0.35)' : '0 8px 24px rgba(37,99,235,0.35)',
-                    transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)'
-                  }}
-                >
-                  {hasDownloaded ? <Check size={20} /> : <DownloadCloud size={20} />}
-                  {hasDownloaded ? 'Downloaded!' : 'Download document.pdf'}
-                </a>
-              </div>
+              </ResultCard>
             )}
           </div>
         </div>
