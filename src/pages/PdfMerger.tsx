@@ -462,7 +462,8 @@ export const PdfMerger: React.FC = () => {
                         minHeight: '28px',
                         display: 'flex',
                         alignItems: 'center',
-                        justifyContent: 'center'
+                        justifyContent: 'center',
+                        color: 'var(--text-primary)'
                       }}
                       title="Move Left"
                     >
@@ -480,7 +481,8 @@ export const PdfMerger: React.FC = () => {
                         minHeight: '28px',
                         display: 'flex',
                         alignItems: 'center',
-                        justifyContent: 'center'
+                        justifyContent: 'center',
+                        color: 'var(--text-primary)'
                       }}
                       title="Move Right"
                     >
