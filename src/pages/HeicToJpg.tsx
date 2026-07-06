@@ -176,8 +176,8 @@ export const HeicToJpg: React.FC = () => {
       {sourceImage && (
         <div className="dashboard-sidebar">
           <div className="dashboard-sidebar-content">
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-              <h3 style={{ fontSize: '1.1rem', fontWeight: 600, color: 'var(--text-primary)' }}>File Information</h3>
+            <div className="card" style={{ padding: '1rem' }}>
+              <h3 style={{ fontSize: '1.1rem', fontWeight: 600, marginBottom: '0.5rem', color: 'var(--text-primary)' }}>File Information</h3>
               <p style={{ fontSize: '0.9rem', color: 'var(--text-secondary)' }}>
                 <strong>Name:</strong> {sourceFile?.name}
               </p>
@@ -186,7 +186,7 @@ export const HeicToJpg: React.FC = () => {
               </p>
             </div>
 
-            <div className="controls" style={{ marginTop: 'auto', display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+            <div className="card controls" style={{ padding: '1rem', marginTop: 'auto' }}>
               <button 
                 onClick={clearImage}
                 className="btn-danger"

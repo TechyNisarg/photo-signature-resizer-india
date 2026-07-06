@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { Upload, Lock, Unlock, AlertCircle, FileText, X, CheckCircle2 } from 'lucide-react';
+import { Upload, Lock, Unlock, AlertCircle, FileText, X } from 'lucide-react';
 import { isEncrypted } from '@pdfsmaller/pdf-decrypt';
 import { Dropzone } from '../components/ui/Dropzone';
 import { ResultCard } from '../components/ui/ResultCard';
@@ -155,19 +155,10 @@ export const PdfSecurity: React.FC = () => {
               </div>
               <div className="card">
                 <h2 style={{ fontSize: '1.1rem', marginBottom: '1rem', color: 'var(--text-primary)' }}>Use Cases</h2>
-                <ul style={{ listStyleType: 'none', color: 'var(--text-secondary)', display: 'flex', flexDirection: 'column', gap: '0.5rem', fontSize: '0.9rem' }}>
-                  <li style={{ display: 'flex', alignItems: 'flex-start', gap: '0.5rem' }}>
-                    <CheckCircle2 size={16} color="var(--primary)" style={{ flexShrink: 0, marginTop: '2px' }} />
-                    <span>Lock PDF with a password</span>
-                  </li>
-                  <li style={{ display: 'flex', alignItems: 'flex-start', gap: '0.5rem' }}>
-                    <CheckCircle2 size={16} color="var(--primary)" style={{ flexShrink: 0, marginTop: '2px' }} />
-                    <span>Unlock PDF (if you know the password)</span>
-                  </li>
-                  <li style={{ display: 'flex', alignItems: 'flex-start', gap: '0.5rem' }}>
-                    <CheckCircle2 size={16} color="var(--primary)" style={{ flexShrink: 0, marginTop: '2px' }} />
-                    <span>100% Client-side processing (Secure)</span>
-                  </li>
+                <ul style={{ listStylePosition: 'inside', color: 'var(--text-secondary)', display: 'flex', flexDirection: 'column', gap: '0.5rem', fontSize: '0.9rem' }}>
+                  <li>Remove passwords from Aadhaar cards for easy printing</li>
+                  <li>Unlock downloaded Bank Statements</li>
+                  <li>Secure your own private documents before sharing</li>
                 </ul>
               </div>
             </div>

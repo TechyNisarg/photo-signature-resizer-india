@@ -27,18 +27,35 @@ export const PresetSelector: React.FC<PresetSelectorProps> = ({
   }
 
   return (
-    <div style={{ width: '100%', marginBottom: '0' }}>
-      <div className="segmented-control" style={availableTypes.length > 3 ? { flexWrap: 'wrap' } : {}}>
+    <div className="preset-selector" style={{ display: 'flex', justifyContent: 'center', width: '100%', marginBottom: '0' }}>
+      <div className="pills-container" style={{ 
+        display: 'inline-flex', 
+        flexWrap: 'wrap',
+        justifyContent: 'center',
+        background: 'var(--surface-solid)', 
+        padding: '0.35rem', 
+        borderRadius: '12px', 
+        border: '1px solid var(--border-color)',
+        gap: '0.25rem'
+      }}>
         {availableTypes.map(t => {
           const TypeIcon = TYPE_ICONS[t.type as string];
-          const isActive = currentType === t.type;
           return (
             <button
               key={t.type}
-              className={`segmented-btn ${isActive ? 'active' : ''}`}
+              className={`pill-btn ${currentType === t.type ? 'active' : ''}`}
               onClick={() => onTypeSelect(t.type)}
+              style={{ 
+                display: 'flex', 
+                alignItems: 'center', 
+                gap: '0.5rem',
+                border: 'none',
+                background: currentType === t.type ? 'var(--primary)' : 'transparent',
+                color: currentType === t.type ? 'white' : 'var(--text-secondary)',
+                boxShadow: currentType === t.type ? '0 4px 14px rgba(59, 130, 246, 0.3)' : 'none'
+              }}
             >
-              {TypeIcon && <TypeIcon size={16} />}
+              {TypeIcon && <TypeIcon size={16} style={{ position: 'relative', top: '1px' }} />}
               <span>{t.label}</span>
             </button>
           );
