@@ -1,8 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { AlertCircle, X, Image as ImageIcon } from 'lucide-react';
-import { Dropzone } from '../components/ui/Dropzone';
-import { ResultCard } from '../components/ui/ResultCard';
-import { ProcessingOverlay } from '../components/ui/ProcessingOverlay';
+import { DownloadCloud, AlertCircle, X, Loader2, Image as ImageIcon } from 'lucide-react';
+
 const getErrorMessage = (error: unknown) => (
   error instanceof Error ? error.message : 'Unknown error'
 );
@@ -16,7 +14,7 @@ export const HeicToJpg: React.FC = () => {
   const [downloadUrl, setDownloadUrl] = useState('');
   const [outputSizeKB, setOutputSizeKB] = useState(0);
   const resultRef = useRef<HTMLDivElement>(null);
-  
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     return () => {
@@ -86,7 +84,14 @@ export const HeicToJpg: React.FC = () => {
     processFile();
   };
 
-    const clearImage = () => {
+  const handleDrop = (e: React.DragEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
+      handleFiles(e.dataTransfer.files);
+    }
+  };
+
+  const clearImage = () => {
     if (sourceImage) URL.revokeObjectURL(sourceImage.src);
     if (downloadUrl) URL.revokeObjectURL(downloadUrl);
     setSourceImage(null);
@@ -97,32 +102,75 @@ export const HeicToJpg: React.FC = () => {
   };
 
   return (
-    <div className="dashboard-layout">
-      <ProcessingOverlay isProcessing={isProcessing} message={processingMessage || 'Processing...'} />
-      
-      {/* Left Column: Upload / Result */}
-      <div className="dashboard-left">
+    <div className="container" style={{ maxWidth: '1000px', margin: '0 auto 4rem' }}>
+      {isProcessing && (
+        <div style={{ position: 'fixed', inset: 0, backgroundColor: 'rgba(0,0,0,0.5)', zIndex: 9999, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', color: 'white' }}>
+          <Loader2 size={48} className="spinner" style={{ marginBottom: '1rem', borderTopColor: 'white' }} />
+          <h2 style={{ fontSize: '1.5rem', fontWeight: 600 }}>{processingMessage || 'Processing...'}</h2>
+        </div>
+      )}
+      <div className="card">
+        <h2 style={{ textAlign: 'center', marginBottom: '2rem', fontSize: '1.75rem', fontWeight: 700, color: 'var(--text-primary)' }}>
+          HEIC to JPG Converter
+        </h2>
+
         {!sourceImage ? (
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem', width: '100%' }}>
-            <div className="card" style={{ padding: '2rem', display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
-              <div style={{ textAlign: 'left' }}>
-                <h1 style={{ fontSize: '1.5rem', fontWeight: 600, color: 'var(--text-primary)', marginBottom: '0.25rem' }}>
-                  HEIC to JPG Converter
-                </h1>
-                <p style={{ color: 'var(--text-secondary)', fontSize: '0.95rem' }}>Instantly convert iPhone photos to universally accepted JPG format</p>
-              </div>
-              
-              <Dropzone
-                onFiles={handleFiles}
-                accept=".heic,.heif,image/heic,image/heif"
-                title="Upload iPhone Photo (.heic)"
-                subtitle="Instantly convert to universally accepted JPG format"
-                icon={<ImageIcon size={48} color="var(--primary)" />}
-              />
+          <div 
+            className="dropzone"
+            onDragOver={(e) => e.preventDefault()}
+            onDrop={handleDrop}
+            onClick={() => fileInputRef.current?.click()}
+            style={{ 
+              border: '2px dashed var(--border-color)', 
+              borderRadius: '16px', 
+              padding: '3rem 2rem', 
+              textAlign: 'center',
+              cursor: 'pointer',
+              backgroundColor: 'var(--surface-solid)',
+              transition: 'all 0.3s ease'
+            }}
+          >
+            <input 
+              type="file" 
+              ref={fileInputRef} 
+              onChange={(e) => e.target.files && handleFiles(e.target.files)} 
+              accept=".heic,.heif,image/heic,image/heif" 
+              style={{ display: 'none' }} 
+            />
+            <div className="upload-icon-container" style={{ width: '64px', height: '64px', margin: '0 auto 1rem', backgroundColor: 'var(--bg-color)', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+              <ImageIcon size={32} color="var(--primary)" />
             </div>
+            <h3 style={{ fontSize: '1.25rem', marginBottom: '0.5rem', color: 'var(--text-primary)' }}>
+              Upload iPhone Photo (.heic)
+            </h3>
+            <p style={{ color: 'var(--text-secondary)' }}>Instantly convert to universally accepted JPG format</p>
           </div>
         ) : (
-          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: '100%', gap: '2rem' }}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
+            <div style={{ display: 'flex', gap: '2rem', flexWrap: 'wrap', justifyContent: 'center' }}>
+              <div style={{ flex: '1 1 300px', maxWidth: '500px', backgroundColor: 'var(--surface-solid)', borderRadius: '12px', padding: '1.5rem', border: '1px solid var(--border-color)' }}>
+                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '1rem' }}>
+                  <img 
+                    src={sourceImage.src} 
+                    alt="Converted JPG" 
+                    style={{ width: '100%', maxHeight: '300px', objectFit: 'contain', borderRadius: '8px', border: '1px solid var(--border-color)' }} 
+                  />
+                  <p style={{ textAlign: 'center', color: 'var(--text-secondary)', fontSize: '0.9rem', marginBottom: '0.5rem' }}>
+                    {sourceFile?.name} <br/>
+                    Original File Size: {sourceFile ? (sourceFile.size / 1024).toFixed(2) : 0} KB
+                  </p>
+                  <button 
+                    onClick={clearImage}
+                    className="btn-danger"
+                    style={{ padding: '0.5rem 1rem', fontSize: '0.9rem', display: 'flex', alignItems: 'center', gap: '0.5rem', width: 'auto' }}
+                  >
+                    <X size={16} />
+                    Clear Image
+                  </button>
+                </div>
+              </div>
+            </div>
+
             {error && (
               <div style={{ backgroundColor: 'rgba(239, 68, 68, 0.1)', color: 'var(--danger)', padding: '1rem', borderRadius: '8px', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
                 <AlertCircle size={20} />
@@ -130,75 +178,39 @@ export const HeicToJpg: React.FC = () => {
               </div>
             )}
 
-            {!downloadUrl ? (
-              <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '1rem', width: '100%', maxWidth: '600px' }}>
-                <h3 style={{ fontSize: '1.25rem', fontWeight: 600 }}>Original Image</h3>
-                <img 
-                  src={sourceImage.src} 
-                  alt="Original" 
-                  style={{ width: '100%', maxHeight: '50vh', objectFit: 'contain', borderRadius: '8px', border: '1px solid var(--border-color)', boxShadow: '0 8px 32px rgba(0,0,0,0.1)' }} 
-                />
-                <p style={{ textAlign: 'center', color: 'var(--text-secondary)' }}>
-                  {sourceFile?.name} <br/>
-                  Original Size: {sourceFile ? (sourceFile.size / 1024).toFixed(2) : 0} KB
-                </p>
-              </div>
-            ) : (
-              <div className="result-view">
-                <ResultCard
-                  successMessage="Converted Successfully! 🎉"
-                  downloadUrl={downloadUrl}
-                  downloadFilename={`${sourceFile?.name.replace(/\.heic|\.heif/i, '') || 'converted'}.jpg`}
-                  buttonText="Download JPG"
-                >
-                  <img src={downloadUrl} alt="Converted JPG" style={{ maxWidth: '100%', maxHeight: '40vh', margin: '0 auto 2rem', borderRadius: '8px', border: '1px solid var(--border-color)', boxShadow: '0 8px 32px rgba(0,0,0,0.1)' }} />
-                  <div style={{ display: 'flex', justifyContent: 'center', gap: '2rem' }}>
-                    <div style={{ textAlign: 'center' }}>
-                      <p style={{ color: 'var(--text-secondary)', marginBottom: '0.25rem' }}>Format</p>
-                      <p style={{ fontSize: '1.25rem', fontWeight: 600 }}>JPG</p>
-                    </div>
-                    <div style={{ borderLeft: '1px solid var(--border-color)' }}></div>
-                    <div style={{ textAlign: 'center' }}>
-                      <p style={{ color: 'var(--text-secondary)', marginBottom: '0.25rem' }}>Output Size</p>
-                      <p style={{ fontSize: '1.25rem', fontWeight: 600, color: 'var(--success)' }}>
-                        {outputSizeKB.toFixed(1)} KB
-                      </p>
-                    </div>
+            {downloadUrl && (
+              <div ref={resultRef} className="result-card" style={{ padding: '2rem', backgroundColor: 'var(--surface-solid)', borderRadius: '12px', textAlign: 'center', border: '1px solid var(--border-color)', boxShadow: '0 8px 32px rgba(0,0,0,0.05)' }}>
+                <h4 style={{ color: 'var(--success)', fontSize: '1.5rem', marginBottom: '1rem' }}>
+                  Converted Successfully! 🎉
+                </h4>
+                <div style={{ display: 'flex', justifyContent: 'center', gap: '2rem', marginBottom: '2rem' }}>
+                  <div style={{ textAlign: 'center' }}>
+                    <p style={{ color: 'var(--text-secondary)', marginBottom: '0.25rem' }}>Format</p>
+                    <p style={{ fontSize: '1.25rem', fontWeight: 600 }}>JPG</p>
                   </div>
-                </ResultCard>
+                  <div style={{ borderLeft: '1px solid var(--border-color)' }}></div>
+                  <div style={{ textAlign: 'center' }}>
+                    <p style={{ color: 'var(--text-secondary)', marginBottom: '0.25rem' }}>Output Size</p>
+                    <p style={{ fontSize: '1.25rem', fontWeight: 600, color: 'var(--success)' }}>
+                      {outputSizeKB.toFixed(1)} KB
+                    </p>
+                  </div>
+                </div>
+
+                <a
+                  href={downloadUrl}
+                  download={`${sourceFile?.name.replace(/\.heic|\.heif/i, '') || 'converted'}.jpg`}
+                  className="btn-success"
+                  style={{ display: 'inline-flex', alignItems: 'center', gap: '0.5rem', padding: '1rem 2rem', fontSize: '1.1rem', borderRadius: '12px', textDecoration: 'none' }}
+                >
+                  <DownloadCloud size={24} />
+                  Download JPG
+                </a>
               </div>
             )}
           </div>
         )}
       </div>
-
-      {/* Right Column: Sidebar */}
-      {sourceImage && (
-        <div className="dashboard-sidebar">
-          <div className="dashboard-sidebar-content">
-            <div className="card" style={{ padding: '1rem' }}>
-              <h3 style={{ fontSize: '1.1rem', fontWeight: 600, marginBottom: '0.5rem', color: 'var(--text-primary)' }}>File Information</h3>
-              <p style={{ fontSize: '0.9rem', color: 'var(--text-secondary)' }}>
-                <strong>Name:</strong> {sourceFile?.name}
-              </p>
-              <p style={{ fontSize: '0.9rem', color: 'var(--text-secondary)' }}>
-                <strong>Original Size:</strong> {sourceFile ? (sourceFile.size / 1024).toFixed(2) : 0} KB
-              </p>
-            </div>
-
-            <div className="card controls" style={{ padding: '1rem', marginTop: 'auto' }}>
-              <button 
-                onClick={clearImage}
-                className="btn-danger"
-                style={{ width: '100%', padding: '0.75rem', fontSize: '1.1rem' }}
-              >
-                <X size={20} />
-                <span>Clear Image</span>
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
     </div>
   );
 };

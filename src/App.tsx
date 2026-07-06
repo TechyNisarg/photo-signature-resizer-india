@@ -4,14 +4,16 @@ import { Scissors, ShieldCheck, Menu, X, ArrowLeft, HelpCircle, Info, FileText, 
 import { Analytics } from '@vercel/analytics/react';
 import { CATEGORIES, PDF_TOOLS, IMAGE_TOOLS } from './config/tools';
 
-const HeaderBackButton = () => {
+const GlobalBackButton = () => {
   const location = useLocation();
   if (location.pathname === '/') return null;
   
   return (
-    <Link to="/" className="back-icon-btn" style={{ marginLeft: '-0.5rem', width: '36px', height: '36px' }} title="Back to All Tools">
-       <ArrowLeft size={20} />
-    </Link>
+    <div style={{ maxWidth: '1440px', margin: '0 auto', width: '100%', padding: '1rem 1rem 0', display: 'flex' }}>
+      <Link to="/" className="back-icon-btn" title="Back to All Tools">
+         <ArrowLeft size={24} />
+      </Link>
+    </div>
   );
 };
 import { AnimatePresence, motion } from 'framer-motion';
@@ -194,7 +196,6 @@ function App() {
               >
                 <Menu size={24} />
               </button>
-              <HeaderBackButton />
               <Link to="/" className="logo" style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
                 <Scissors size={24} />
                 <div><span className="logo-text">Resizer</span> India</div>
@@ -251,6 +252,7 @@ function App() {
         </AnimatePresence>
 
         <main className="main-container">
+          <GlobalBackButton />
           <AppRoutes />
         </main>
 

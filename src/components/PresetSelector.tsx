@@ -30,8 +30,6 @@ export const PresetSelector: React.FC<PresetSelectorProps> = ({
     <div className="preset-selector" style={{ display: 'flex', justifyContent: 'center', width: '100%', marginBottom: '0' }}>
       <div className="pills-container" style={{ 
         display: 'inline-flex', 
-        flexWrap: 'wrap',
-        justifyContent: 'center',
         background: 'var(--surface-solid)', 
         padding: '0.35rem', 
         borderRadius: '12px', 

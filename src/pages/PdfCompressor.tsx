@@ -1,8 +1,6 @@
-import React, { useEffect, useState } from 'react';
-import { Upload, FileText, DownloadCloud, Trash2, ArrowLeft, ArrowRight, X, AlertCircle } from 'lucide-react';
-import { Dropzone } from '../components/ui/Dropzone';
-import { ResultCard } from '../components/ui/ResultCard';
-import { ProcessingOverlay } from '../components/ui/ProcessingOverlay';
+import React, { useEffect, useRef, useState } from 'react';
+import { Upload, FileText, DownloadCloud, Trash2, ArrowLeft, ArrowRight, X, AlertCircle, Check } from 'lucide-react';
+
 type PageEntry = {
   id: string;
   name: string;
@@ -22,9 +20,9 @@ export const PdfCompressor: React.FC = () => {
   const [error, setError] = useState('');
   const [downloadUrl, setDownloadUrl] = useState('');
   const [outputSizeKB, setOutputSizeKB] = useState(0);
+  const [hasDownloaded, setHasDownloaded] = useState(false);
   
-  
-  
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     return () => {
@@ -122,7 +120,14 @@ export const PdfCompressor: React.FC = () => {
     }
   };
 
-    const removePage = (id: string) => {
+  const handleDrop = (e: React.DragEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
+      handleFiles(e.dataTransfer.files);
+    }
+  };
+
+  const removePage = (id: string) => {
     setPages(prev => prev.filter(p => p.id !== id));
     setDownloadUrl('');
   };
@@ -242,271 +247,316 @@ export const PdfCompressor: React.FC = () => {
   const isOutputOverTarget = outputSizeKB > targetMaxKB;
 
   return (
-    <div className="dashboard-layout">
-      <ProcessingOverlay isProcessing={isProcessing} message={progress || 'Processing...'} />
-      
-      {/* Left Column: Upload / Result */}
-      <div className="dashboard-left">
-        {pages.length === 0 ? (
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem', width: '100%' }}>
-            <div className="card" style={{ padding: '2rem', display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
-              <div style={{ textAlign: 'left' }}>
-                <h1 style={{ fontSize: '1.5rem', fontWeight: 600, color: 'var(--text-primary)', marginBottom: '0.25rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                  <FileText size={24} /> PDF Compressor
-                </h1>
-                <p style={{ color: 'var(--text-secondary)', fontSize: '0.95rem' }}>Compress a single PDF file securely on your device.</p>
+    <div className="home-container" style={{ maxWidth: '960px', margin: '0 auto', padding: '2rem 1rem' }}>
+      {pages.length === 0 && (
+        <header className="hero-section" style={{ marginBottom: '2rem', textAlign: 'center' }}>
+          <h1 style={{ color: 'var(--text-primary)', marginBottom: '0.5rem', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem' }}>
+            <FileText size={32} /> PDF Compressor
+          </h1>
+          <p style={{ color: 'var(--text-secondary)' }}>Compress a single PDF file securely on your device.</p>
+        </header>
+      )}
+
+      {error && (
+        <div className="error-toast" style={{ marginBottom: '1.5rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+          <AlertCircle size={20} />
+          <span>{error}</span>
+        </div>
+      )}
+
+      {pages.length === 0 ? (
+        <div className="workspace">
+          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', width: '100%', gap: '1.5rem', maxWidth: '900px', margin: '0 auto' }}>
+            <div style={{ width: '100%', maxWidth: '700px' }}>
+              <div 
+                className="dropzone"
+                onDrop={handleDrop}
+                onDragOver={(e) => e.preventDefault()}
+                onClick={() => !isProcessing && fileInputRef.current?.click()}
+                style={{ cursor: isProcessing ? 'wait' : 'pointer' }}
+              >
+          <input
+            type="file"
+            ref={fileInputRef}
+            className="hidden"
+            accept="application/pdf"
+            onChange={(e) => e.target.files && handleFiles(e.target.files)}
+            style={{ display: 'none' }}
+          />
+          <Upload size={48} className="upload-icon" />
+          <h3>Tap to Upload or Drop PDF Here</h3>
+          <p>Supports single PDF files</p>
+        </div>
+            </div>
+          </div>
+        </div>
+      ) : (
+        <div className="workspace">
+          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', width: '100%', gap: '1.5rem', maxWidth: '900px', margin: '0 auto' }}>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem', width: '100%' }}>
+              <div className="card" style={{ padding: '1.5rem' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '1rem', marginBottom: '1.5rem' }}>
+              <div>
+                <h2 style={{ fontSize: '1.25rem', color: 'var(--text-primary)' }}>Document Pages ({pages.length})</h2>
+                <p style={{ fontSize: '0.85rem', color: 'var(--text-secondary)' }}>Reorder or delete pages before compression.</p>
               </div>
               
-              <Dropzone
-                onFiles={handleFiles}
-                accept="application/pdf"
-                title="Tap to Upload or Drop PDF Here"
-                subtitle="Supports single PDF files"
-                icon={<Upload size={48} className="upload-icon" color="var(--primary)" />}
-              />
-            </div>
-
-            <div className="info-grid">
-              <div className="card">
-                <h2 style={{ fontSize: '1.1rem', marginBottom: '1rem', color: 'var(--text-primary)' }}>Requirements</h2>
-                <ul style={{ listStylePosition: 'inside', color: 'var(--text-secondary)', display: 'flex', flexDirection: 'column', gap: '0.5rem', fontSize: '0.9rem' }}>
-                  <li>Upload a single PDF</li>
-                  <li>Set your desired maximum output file size</li>
-                </ul>
-              </div>
-              <div className="card">
-                <h2 style={{ fontSize: '1.1rem', marginBottom: '1rem', color: 'var(--text-primary)' }}>Features</h2>
-                <ul style={{ listStylePosition: 'inside', color: 'var(--text-secondary)', display: 'flex', flexDirection: 'column', gap: '0.5rem', fontSize: '0.9rem' }}>
-                  <li>100% Client side processing (Secure)</li>
-                  <li>Single optimized PDF document</li>
-                  <li>High-quality smart compression algorithm</li>
-                </ul>
-              </div>
-            </div>
-          </div>
-        ) : (
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
-            {error && (
-              <div className="error-toast" style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                <AlertCircle size={20} />
-                <span>{error}</span>
-              </div>
-            )}
-
-            <div className="card" style={{ padding: '1.5rem' }}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '1rem', marginBottom: '1.5rem' }}>
-                <div>
-                  <h2 style={{ fontSize: '1.25rem', color: 'var(--text-primary)' }}>Document Pages ({pages.length})</h2>
-                  <p style={{ fontSize: '0.85rem', color: 'var(--text-secondary)' }}>Reorder or delete pages before compression.</p>
-                </div>
-              </div>
-
-              <div style={{
-                display: 'grid',
-                gridTemplateColumns: 'repeat(auto-fill, minmax(160px, 1fr))',
-                gap: '1.25rem',
-                padding: '0.5rem',
-              }}>
-                {pages.map((page, index) => (
-                  <div 
-                    key={page.id} 
-                    className="card" 
-                    style={{ 
-                      padding: '0.75rem', 
-                      display: 'flex', 
-                      flexDirection: 'column', 
-                      alignItems: 'center', 
-                      position: 'relative',
-                      gap: '0.5rem',
-                      backgroundColor: 'var(--surface-solid)'
-                    }}
-                  >
-                    <button 
-                      onClick={() => removePage(page.id)}
-                      disabled={isProcessing}
-                      style={{
-                        position: 'absolute',
-                        top: '8px',
-                        right: '8px',
-                        background: 'rgba(239, 68, 68, 0.1)',
-                        color: 'var(--danger)',
-                        border: 'none',
-                        borderRadius: '50%',
-                        width: '24px',
-                        height: '24px',
-                        minHeight: '24px',
-                        minWidth: '24px',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        padding: 0,
-                        zIndex: 10,
-                        cursor: 'pointer'
-                      }}
-                      title="Remove Page"
-                    >
-                      <X size={14} />
-                    </button>
-
-                    <div style={{
-                      width: '100%',
-                      height: '140px',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      backgroundColor: '#f1f5f9',
-                      borderRadius: '8px',
-                      overflow: 'hidden'
-                    }}>
-                      <img 
-                        src={page.thumbUrl} 
-                        alt={page.name} 
-                        style={{ maxWidth: '100%', maxHeight: '100%', objectFit: 'contain' }} 
-                      />
-                    </div>
-
-                    <span style={{ 
-                      fontSize: '0.75rem', 
-                      textAlign: 'center', 
-                      width: '100%', 
-                      whiteSpace: 'nowrap', 
-                      overflow: 'hidden', 
-                      textOverflow: 'ellipsis',
-                      color: 'var(--text-primary)',
-                      fontWeight: 500
-                    }}>
-                      {page.name}
-                    </span>
-
-                    <div style={{ display: 'flex', gap: '0.5rem', marginTop: '0.25rem' }}>
-                      <button 
-                        onClick={() => movePage(index, 'left')} 
-                        disabled={index === 0 || isProcessing}
-                        style={{
-                          padding: '0.25rem 0.5rem',
-                          borderRadius: '6px',
-                          border: '1px solid var(--border-color)',
-                          background: 'var(--bg-color)',
-                          cursor: 'pointer',
-                          minHeight: '28px',
-                          display: 'flex',
-                          alignItems: 'center',
-                          justifyContent: 'center'
-                        }}
-                        title="Move Left"
-                      >
-                        <ArrowLeft size={12} />
-                      </button>
-                      <button 
-                        onClick={() => movePage(index, 'right')} 
-                        disabled={index === pages.length - 1 || isProcessing}
-                        style={{
-                          padding: '0.25rem 0.5rem',
-                          borderRadius: '6px',
-                          border: '1px solid var(--border-color)',
-                          background: 'var(--bg-color)',
-                          cursor: 'pointer',
-                          minHeight: '28px',
-                          display: 'flex',
-                          alignItems: 'center',
-                          justifyContent: 'center'
-                        }}
-                        title="Move Right"
-                      >
-                        <ArrowRight size={12} />
-                      </button>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-            
-            {downloadUrl && (
-              <ResultCard
-                successMessage={isOutputOverTarget ? 'PDF Generated, Still Above Target' : 'PDF Compressed Successfully! 🎉'}
-                downloadUrl={downloadUrl}
-                downloadFilename="document.pdf"
-                buttonText="Download document.pdf"
-              >
-                <div style={{ display: 'flex', justifyContent: 'center', gap: '3rem', flexWrap: 'wrap' }}>
-                  <div style={{ textAlign: 'center' }}>
-                    <p style={{ color: 'var(--text-secondary)', marginBottom: '0.25rem' }}>Target Size</p>
-                    <p style={{ fontSize: '1.25rem', fontWeight: 600 }}>{targetMaxKB} KB</p>
-                  </div>
-                  <div style={{ borderLeft: '1px solid var(--border-color)' }}></div>
-                  <div style={{ textAlign: 'center' }}>
-                    <p style={{ color: 'var(--text-secondary)', marginBottom: '0.25rem' }}>Output Size</p>
-                    <p style={{ fontSize: '1.25rem', fontWeight: 600, color: isOutputOverTarget ? 'var(--danger)' : 'var(--success)' }}>
-                      {outputSizeKB.toFixed(1)} KB
-                    </p>
-                  </div>
-                </div>
-              </ResultCard>
-            )}
-          </div>
-        )}
-      </div>
-
-      {/* Right Column: Sidebar */}
-      {pages.length > 0 && (
-        <div className="dashboard-sidebar">
-          <div className="dashboard-sidebar-content">
-            <div className="card" style={{ padding: '1rem' }}>
-              <h3 style={{ fontSize: '1.1rem', fontWeight: 600, marginBottom: '1rem', color: 'var(--text-primary)' }}>Target Output Size</h3>
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '0.5rem', marginBottom: '1rem' }}>
-                {[100, 200, 300, 500].map((size) => (
-                  <button
-                    key={size}
-                    onClick={() => { setTargetMaxKB(size); setDownloadUrl(''); }}
-                    disabled={isProcessing}
-                    style={{
-                      padding: '0.75rem 0.5rem',
-                      backgroundColor: targetMaxKB === size ? 'var(--primary)' : 'var(--surface-solid)',
-                      color: targetMaxKB === size ? 'white' : 'var(--text-primary)',
-                      border: `1px solid ${targetMaxKB === size ? 'var(--primary)' : 'var(--border-color)'}`,
-                      borderRadius: '8px',
-                      fontSize: '0.9rem',
-                      fontWeight: 600,
-                      cursor: 'pointer',
-                      transition: 'all 0.2s'
-                    }}
-                  >
-                    Under {size} KB
-                  </button>
-                ))}
-              </div>
-            </div>
-
-            <div className="card controls" style={{ padding: '1rem', marginTop: 'auto' }}>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-                <button
-                  onClick={handleCompress}
-                  disabled={isProcessing || pages.length === 0}
-                  className={`btn-primary ${isProcessing ? 'processing' : ''}`}
-                  style={{ width: '100%', padding: '0.75rem', fontSize: '1.1rem' }}
-                >
-                  {isProcessing ? (
-                    <div className="spinner" style={{ width: '20px', height: '20px', borderTopColor: 'white' }}></div>
-                  ) : (
-                    <DownloadCloud size={20} />
-                  )}
-                  <span>{isProcessing ? 'Processing...' : 'Compress PDF'}</span>
-                </button>
-
+              <div style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
                 <button 
                   className="btn-danger" 
                   onClick={() => setPages([])}
                   disabled={isProcessing}
-                  style={{ width: '100%', padding: '0.75rem', fontSize: '1.1rem' }}
+                  style={{ width: 'auto', padding: '0.5rem 1rem' }}
                 >
-                  <Trash2 size={20} /> 
-                  <span>Clear File</span>
+                  <Trash2 size={16} /> Clear File
                 </button>
               </div>
             </div>
+
+            <div style={{
+              display: 'grid',
+              gridTemplateColumns: 'repeat(auto-fill, minmax(160px, 1fr))',
+              gap: '1.25rem',
+              maxHeight: '480px',
+              overflowY: 'auto',
+              padding: '0.5rem',
+              border: '1px solid var(--border-color)',
+              borderRadius: '12px',
+              backgroundColor: 'var(--surface-solid)'
+            }}>
+              {pages.map((page, index) => (
+                <div 
+                  key={page.id} 
+                  className="card" 
+                  style={{ 
+                    padding: '0.75rem', 
+                    display: 'flex', 
+                    flexDirection: 'column', 
+                    alignItems: 'center', 
+                    position: 'relative',
+                    gap: '0.5rem',
+                    backgroundColor: 'var(--surface)'
+                  }}
+                >
+                  <button 
+                    onClick={() => removePage(page.id)}
+                    disabled={isProcessing}
+                    style={{
+                      position: 'absolute',
+                      top: '8px',
+                      right: '8px',
+                      background: 'rgba(239, 68, 68, 0.1)',
+                      color: 'var(--danger)',
+                      border: 'none',
+                      borderRadius: '50%',
+                      width: '24px',
+                      height: '24px',
+                      minHeight: '24px',
+                      minWidth: '24px',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      padding: 0,
+                      zIndex: 10,
+                      cursor: 'pointer'
+                    }}
+                    title="Remove Page"
+                  >
+                    <X size={14} />
+                  </button>
+
+                  <div style={{
+                    width: '100%',
+                    height: '140px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    backgroundColor: '#f1f5f9',
+                    borderRadius: '8px',
+                    overflow: 'hidden'
+                  }}>
+                    <img 
+                      src={page.thumbUrl} 
+                      alt={page.name} 
+                      style={{ maxWidth: '100%', maxHeight: '100%', objectFit: 'contain' }} 
+                    />
+                  </div>
+
+                  <span style={{ 
+                    fontSize: '0.75rem', 
+                    textAlign: 'center', 
+                    width: '100%', 
+                    whiteSpace: 'nowrap', 
+                    overflow: 'hidden', 
+                    textOverflow: 'ellipsis',
+                    color: 'var(--text-primary)',
+                    fontWeight: 500
+                  }}>
+                    {page.name}
+                  </span>
+
+                  <div style={{ display: 'flex', gap: '0.5rem', marginTop: '0.25rem' }}>
+                    <button 
+                      onClick={() => movePage(index, 'left')} 
+                      disabled={index === 0 || isProcessing}
+                      style={{
+                        padding: '0.25rem 0.5rem',
+                        borderRadius: '6px',
+                        border: '1px solid var(--border-color)',
+                        background: 'var(--surface)',
+                        cursor: 'pointer',
+                        minHeight: '28px',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center'
+                      }}
+                      title="Move Left"
+                    >
+                      <ArrowLeft size={12} />
+                    </button>
+                    <button 
+                      onClick={() => movePage(index, 'right')} 
+                      disabled={index === pages.length - 1 || isProcessing}
+                      style={{
+                        padding: '0.25rem 0.5rem',
+                        borderRadius: '6px',
+                        border: '1px solid var(--border-color)',
+                        background: 'var(--surface)',
+                        cursor: 'pointer',
+                        minHeight: '28px',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center'
+                      }}
+                      title="Move Right"
+                    >
+                      <ArrowRight size={12} />
+                    </button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <div className="card" style={{ padding: '1.5rem' }}>
+            <h3 style={{ fontSize: '1.125rem', marginBottom: '1rem', fontWeight: 600 }}>Target Output Size</h3>
+            <div style={{ display: 'flex', gap: '1rem', marginBottom: '1.5rem', flexWrap: 'wrap' }}>
+              {[100, 200, 300, 500].map((size) => (
+                <button
+                  key={size}
+                  onClick={() => { setTargetMaxKB(size); setDownloadUrl(''); }}
+                  disabled={isProcessing}
+                  style={{
+                    flex: 1,
+                    minWidth: '100px',
+                    padding: '0.75rem',
+                    backgroundColor: targetMaxKB === size ? 'var(--primary)' : 'var(--surface)',
+                    color: targetMaxKB === size ? 'white' : 'var(--text-primary)',
+                    border: `1px solid ${targetMaxKB === size ? 'var(--primary)' : 'var(--border-color)'}`,
+                    borderRadius: '12px',
+                    fontWeight: 600,
+                    cursor: 'pointer',
+                    transition: 'all 0.2s'
+                  }}
+                >
+                  Under {size} KB
+                </button>
+              ))}
+            </div>
+
+            {progress && (
+              <div style={{ 
+                margin: '1rem 0', 
+                padding: '1rem', 
+                backgroundColor: 'rgba(59, 130, 246, 0.05)', 
+                border: '1px solid rgba(59, 130, 246, 0.2)',
+                borderRadius: '8px', 
+                textAlign: 'center',
+                color: 'var(--primary)',
+                fontWeight: 600
+              }}>
+                {progress}
+              </div>
+            )}
+
+            <button
+              onClick={handleCompress}
+              disabled={isProcessing || pages.length === 0}
+              className={`btn-primary ${isProcessing ? 'processing' : ''}`}
+              style={{ width: '100%', padding: '1rem' }}
+            >
+              {isProcessing ? (
+                <div className="spinner" style={{ width: '20px', height: '20px', borderTopColor: 'white' }}></div>
+              ) : (
+                <DownloadCloud size={20} />
+              )}
+              <span>{isProcessing ? progress || 'Processing...' : 'Compress PDF'}</span>
+            </button>
+
+            {downloadUrl && (
+              <div className="result-card" style={{ marginTop: '2rem', padding: '1.5rem', backgroundColor: 'var(--surface-solid)', borderRadius: '12px', textAlign: 'center' }}>
+                <h4 style={{ color: isOutputOverTarget ? 'var(--danger)' : '#10b981', fontSize: '1.25rem', marginBottom: '0.5rem' }}>
+                  {isOutputOverTarget ? 'PDF Generated, Still Above Target' : 'PDF Compressed Successfully! 🎉'}
+                </h4>
+                <p style={{ color: 'var(--text-secondary)', marginBottom: '1rem' }}>
+                  Target: Under {targetMaxKB} KB | Output Size: <strong style={{ color: isOutputOverTarget ? 'var(--danger)' : '#10b981' }}>{outputSizeKB.toFixed(1)} KB</strong>
+                </p>
+                <a
+                  href={downloadUrl}
+                  download="document.pdf"
+                  className="btn-success"
+                  onClick={() => {
+                    setHasDownloaded(true);
+                    setTimeout(() => setHasDownloaded(false), 2500);
+                  }}
+                  style={{
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    gap: '0.5rem',
+                    backgroundColor: hasDownloaded ? 'var(--success)' : 'var(--primary)',
+                    color: 'white',
+                    padding: '1rem 2rem',
+                    borderRadius: '12px',
+                    fontWeight: 600,
+                    textDecoration: 'none',
+                    boxShadow: hasDownloaded ? '0 8px 24px rgba(16, 185, 129, 0.35)' : '0 8px 24px rgba(37,99,235,0.35)',
+                    transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)'
+                  }}
+                >
+                  {hasDownloaded ? <Check size={20} /> : <DownloadCloud size={20} />}
+                  {hasDownloaded ? 'Downloaded!' : 'Download document.pdf'}
+                </a>
+              </div>
+            )}
           </div>
         </div>
+        </div>
+        </div>
       )}
+
+      <div className="info-grid" style={{ margin: '0 auto' }}>
+
+        {pages.length === 0 && (
+          <>
+            <div className="card">
+              <h2 style={{ fontSize: '1.25rem', marginBottom: '1rem', color: 'var(--text-primary)' }}>Requirements (From You)</h2>
+              <ul style={{ listStylePosition: 'inside', color: 'var(--text-secondary)', display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+                <li>Upload a single PDF</li>
+                <li>Set your desired maximum output file size</li>
+              </ul>
+            </div>
+            <div className="card">
+              <h2 style={{ fontSize: '1.25rem', marginBottom: '1rem', color: 'var(--text-primary)' }}>Output Specifications (By Tool)</h2>
+              <ul style={{ listStylePosition: 'inside', color: 'var(--text-secondary)', display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+                <li>100% Client side processing (Secure)</li>
+                <li>Single optimized PDF document</li>
+                <li>High-quality smart compression algorithm</li>
+              </ul>
+            </div>
+          </>
+        )}
+      </div>
     </div>
   );
 };
